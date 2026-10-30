@@ -1,3 +1,4 @@
+import SigninForm from "@/components/form/SigninForm";
 import Image from "next/image";
 
 const SigninPage = () => {
@@ -26,13 +27,26 @@ const SigninPage = () => {
       {/* -----form */}
       <div className="lg:col-span-6 bg-white px-8 py-10 sm:px-12 sm:py-14 lg:px-16 lg:py-16 flex flex-col justify-between">
         {/* ----logo */}
-        <Image src={"/logo.png"} alt="logo" width={16} height={20} className="h-16 xl:h-20 xl:mt-10 w-auto object-contain"/>
+        <Image
+          src={"/logo.png"}
+          alt="logo"
+          width={16}
+          height={20}
+          className="h-16 xl:h-20 xl:mt-10 w-auto object-contain"
+        />
         {/* ----heading */}
         <div className="max-w-md w-full mx-auto my-auto py-2">
-            <div className="text-center mb-8">
-                <h1 className="text-3xl sm:text-4xl font-serif text-slate-900 font-normal tracking-tight">Welcome Back</h1>
-                <p className="text-xs sm:text-sm text-slate-500 mt-2">Enter your email and password to access your photo library</p>
-            </div>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl sm:text-4xl font-serif text-slate-900 font-normal tracking-tight">
+              Welcome Back
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2">
+              Enter your email and password to access your photo library
+            </p>
+          </div>
+
+          {/* ----form component */}
+          <SigninForm />
         </div>
       </div>
     </div>
