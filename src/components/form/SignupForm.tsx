@@ -8,16 +8,6 @@ import { EyeClosed, EyeIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { useRouter } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-
 
 import { toast } from "../ui/toast";
 import Link from "next/link";
@@ -43,24 +33,14 @@ const SignupForm = () => {
         email: data.value.email,
         password: data.value.password,
       }
+
+      console.log(signupData);
+      
     },
   });
 
   return (
-    <div className="flex flex-col gap-6 rounded-[20px] border border-[#E3E5EA] bg-white p-6 sm:p-8">
-      {/* -------------heading */}
-      <div className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-bold tracking-[0.05em] text-[#8E1A20]">
-          STEP 1 OF 2
-        </span>
-        <h1 className="text-[28px] font-bold leading-tight tracking-tight text-[#15171C]">
-          Create your account
-        </h1>
-        <p className="text-[15px] text-[#5B616E]">
-          We will email you a 6-digit code.
-        </p>
-      </div>
-
+    <div className="flex w-full flex-col gap-6">
       <form
         className="flex flex-col gap-[18px]"
         onSubmit={(e) => {
@@ -75,10 +55,10 @@ const SignupForm = () => {
               field.state.meta.isTouched && !field.state.meta.isValid;
 
             return (
-              <Field className="gap-1.5">
+              <Field className="gap-2">
                 <FieldLabel
                   htmlFor={field.name}
-                  className="text-sm font-semibold text-[#15171C]"
+                  className="text-sm font-medium text-slate-800"
                 >
                   Full name
                 </FieldLabel>
@@ -90,11 +70,11 @@ const SignupForm = () => {
                   onBlur={field.handleBlur}
                   autoComplete="off"
                   placeholder="Rahim Uddin"
-                  className={`h-[46px] rounded-[10px] border-[#D5D8DE] bg-white px-3 text-[15px] text-[#15171C] placeholder:text-[#8A909B] focus-visible:border-[#B4232A] focus-visible:ring-[#B4232A]/20 md:text-[15px] ${isValid ? "border-red-500" : ""}`}
+                  className={`h-11 rounded-xl border-transparent bg-[#f3f4f8] px-4 text-sm text-slate-900 placeholder:text-slate-400 hover:bg-[#eef0f5] focus-visible:border-slate-300 focus-visible:bg-white focus-visible:ring-3 focus-visible:ring-slate-900/5 ${isValid ? "border-red-500" : ""}`}
                 />
                 {isValid && (
                   <FieldError
-                    className="text-[13px]"
+                    className="text-xs text-red-500"
                     errors={field.state.meta.errors}
                   />
                 )}
@@ -110,10 +90,10 @@ const SignupForm = () => {
               field.state.meta.isTouched && !field.state.meta.isValid;
 
             return (
-              <Field className="gap-1.5">
+              <Field className="gap-2">
                 <FieldLabel
                   htmlFor={field.name}
-                  className="text-sm font-semibold text-[#15171C]"
+                  className="text-sm font-medium text-slate-800"
                 >
                   Email
                 </FieldLabel>
@@ -125,11 +105,11 @@ const SignupForm = () => {
                   onBlur={field.handleBlur}
                   autoComplete="off"
                   placeholder="you@example.com"
-                  className={`h-[46px] rounded-[10px] border-[#D5D8DE] bg-white px-3 text-[15px] text-[#15171C] placeholder:text-[#8A909B] focus-visible:border-[#B4232A] focus-visible:ring-[#B4232A]/20 md:text-[15px] ${isValid ? "border-red-500" : ""}`}
+                  className={`h-11 rounded-xl border-transparent bg-[#f3f4f8] px-4 text-sm text-slate-900 placeholder:text-slate-400 hover:bg-[#eef0f5] focus-visible:border-slate-300 focus-visible:bg-white focus-visible:ring-3 focus-visible:ring-slate-900/5 ${isValid ? "border-red-500" : ""}`}
                 />
                 {isValid && (
                   <FieldError
-                    className="text-[13px]"
+                    className="text-xs text-red-500"
                     errors={field.state.meta.errors}
                   />
                 )}
@@ -146,10 +126,10 @@ const SignupForm = () => {
               field.state.meta.isTouched && !field.state.meta.isValid;
 
             return (
-              <Field className="gap-1.5">
+              <Field className="gap-2">
                 <FieldLabel
                   htmlFor={field.name}
-                  className="text-sm font-semibold text-[#15171C]"
+                  className="text-sm font-medium text-slate-800"
                 >
                   Password
                 </FieldLabel>
@@ -162,25 +142,25 @@ const SignupForm = () => {
                     onBlur={field.handleBlur}
                     autoComplete="off"
                     placeholder="8–32 characters"
-                    className={`h-[46px] rounded-[10px] border-[#D5D8DE] bg-white pl-3 pr-12 text-[15px] text-[#15171C] placeholder:text-[#8A909B] focus-visible:border-[#B4232A] focus-visible:ring-[#B4232A]/20 md:text-[15px] ${isValid ? "border-red-500" : ""}`}
+                    className={`h-11 rounded-xl border-transparent bg-[#f3f4f8] pl-4 pr-12 text-sm text-slate-900 placeholder:text-slate-400 hover:bg-[#eef0f5] focus-visible:border-slate-300 focus-visible:bg-white focus-visible:ring-3 focus-visible:ring-slate-900/5 ${isValid ? "border-red-500" : ""}`}
                     type={showPass ? "text" : "password"}
                   />
                   <button
-                    className="absolute right-1 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center rounded-lg text-[#5B616E] transition-colors hover:bg-[#F0F1F4] hover:text-[#15171C]"
+                    className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-slate-700"
                     type="button"
                     aria-label={showPass ? "Hide password" : "Show password"}
                     onClick={() => setShowPass(!showPass)}
                   >
                     {showPass ? (
-                      <EyeClosed className="size-[18px]" />
+                      <EyeClosed className="size-4" />
                     ) : (
-                      <EyeIcon className="size-[18px]" />
+                      <EyeIcon className="size-4" />
                     )}
                   </button>
                 </div>
                 {isValid && (
                   <FieldError
-                    className="text-[13px]"
+                    className="text-xs text-red-500"
                     errors={field.state.meta.errors}
                   />
                 )}
@@ -193,7 +173,7 @@ const SignupForm = () => {
         <Button
         //   disabled={signupPending}
           type="submit"
-          className="mt-1 h-12 w-full gap-2 rounded-[10px] bg-[#B4232A] text-[15px] font-semibold text-white hover:bg-[#951C22]"
+          className="mt-2 h-11.5 w-full gap-2 rounded-xl bg-black text-sm font-semibold text-white hover:bg-neutral-800"
         >
           {/* {signupPending ? (
             <>
@@ -207,11 +187,11 @@ const SignupForm = () => {
       </form>
 
       {/* -------------footer */}
-      <p className="text-center text-sm text-[#5B616E]">
+      <p className="text-center text-xs text-slate-500">
         Already registered?{" "}
         <Link
           href="/signin"
-          className="font-semibold text-[#B4232A] hover:text-[#8E1A20]"
+          className="font-semibold text-slate-900 hover:underline"
         >
           Sign in
         </Link>
