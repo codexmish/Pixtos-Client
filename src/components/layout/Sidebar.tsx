@@ -1,13 +1,47 @@
 "use client"
 
-import { FolderHeartIcon, ImageIcon, PlusIcon, StarIcon, Trash2Icon, XIcon } from "lucide-react"
+import { FolderHeartIcon, HardDriveIcon, ImageIcon, PlusIcon, StarIcon, Trash2Icon, XIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 
+const DUMMY_STATS = {
+    mediaCount: 11,
+    imageCount: 10,
+    videoCount: 1,
+    favoriteCount: 0,
+    totalBytes: 11535024,
+    albumCount: 1,
+};
+
 const Sidebar = () => {
+
+
+
+    // ----storage stats part
+    const [stats, setStats] = useState(null as any)
+    
+    
+    useEffect(()=>{
+
+        const fetchStats = async()=>{
+            setStats(DUMMY_STATS)
+        }
+        
+        fetchStats()
+        const interVal = setInterval(fetchStats, 15000)
+        return ()=> clearInterval(interVal)
+    },[])
+
+    const storageUsed = stats?.totalBytes ? (stats.totalBytes / (1024 * 1024)).toFixed(1) : "0.0"
+    const storagePercentage = stats?.totalBytes ? Math.min(100, Math.max(3, Math.round((stats.totalBytes / (100 *1024 * 1024)*100)))) : 2
+
+
+
+
+    // --------side menu part
 
     const sideMenuLinks = [
         {to: "/", label: "Photos & Videos", icon: ImageIcon},
@@ -118,6 +152,25 @@ const handleAlbumCreate = (album: any)=>{
 
 
         {/* -----storage widget */}
+        <div className="sidebar-storage-card">
+            <div className="flex items-center justify-between text-xs text-slate-600">
+                <span className="flex items-center gap-1.5 text-slate-700">
+                    <HardDriveIcon className="size-4 text-red-400"/>
+                    Used Storage
+                </span>
+                <span className="font-medium text-slate-900">{storageUsed} MB</span>
+            </div>
+
+            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="sidebar-storage-bar" style={{width: `${storagePercentage}%`}}/>
+            </div>
+
+            <div className="flex justify-between items-center text-[11px] text-slate-400">
+                <span>{stats?.mediaCount?? stats?.imageCount ?? 0} media saved</span>
+                {stats?.videoCount ? <span>{stats.videoCount} Videos</span> : null}
+            </div>
+
+        </div>
     </aside>
     </>
   )

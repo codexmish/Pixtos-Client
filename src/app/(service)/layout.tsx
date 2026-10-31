@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 
 const layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div>
+    <div className="h-screen flex flex-col bg-white overflow-hidden">
       <Navbar />
       <div className="flex-1 flex overflow-hidden min-h-0 relative">
         <Sidebar />
