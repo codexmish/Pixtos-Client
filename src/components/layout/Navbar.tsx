@@ -28,7 +28,7 @@ const initials = user.name
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  // const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const profileRef = useRef<HTMLDivElement>(null);
 
