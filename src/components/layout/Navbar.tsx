@@ -1,24 +1,63 @@
 "use client";
 
 import {
+  LogOutIcon,
   MenuIcon,
   SearchIcon,
   SparkleIcon,
   UploadIcon,
+  UserIcon,
   XIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 
 // --------dummy user data
 const user = {name: "John Dow", email: "dummy@gmaial.com"}
+
+// --------avatar initials, e.g. "John Dow" -> "JD"
+const initials = user.name
+  .split(" ")
+  .map((word) => word[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  // -----close dropdown on outside click or Esc
+  useEffect(() => {
+    if (!dropdownOpen) return;
+
+    const handleClick = (e: MouseEvent) => {
+      if (!profileRef.current?.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDropdownOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [dropdownOpen]);
+
+  // -----logout (demo for now)
+  const handleLogout = () => {
+    setDropdownOpen(false);
+    console.log("logout");
+  };
 
   return (
     <nav className="navbar-header">
@@ -87,6 +126,52 @@ const Navbar = () => {
         </button>
 
         {/* ----user profile menu */}
+        <div className="relative" ref={profileRef}>
+          <button
+            type="button"
+            className="navbar-avatar-btn"
+            aria-label="Open profile menu"
+            aria-haspopup="menu"
+            aria-expanded={dropdownOpen}
+            onClick={() => setDropdownOpen((prev) => !prev)}
+          >
+            {initials}
+          </button>
+
+          {dropdownOpen && (
+            <div className="navbar-dropdown p-2 shadow-lg" role="menu">
+              {/* name and email */}
+              <div className="px-3 py-2.5 border-b border-slate-100 mb-1">
+                <p className="text-sm font-semibold text-slate-800 truncate">
+                  {user.name}
+                </p>
+                <p className="text-xs text-slate-500 truncate">{user.email}</p>
+              </div>
+
+              {/* profile */}
+              <Link
+                href="/profile"
+                role="menuitem"
+                onClick={() => setDropdownOpen(false)}
+                className="w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2 transition"
+              >
+                <UserIcon className="size-4" />
+                Profile
+              </Link>
+
+              {/* logout */}
+              <button
+                type="button"
+                role="menuitem"
+                className="navbar-logout-btn"
+                onClick={handleLogout}
+              >
+                <LogOutIcon className="size-4" />
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
