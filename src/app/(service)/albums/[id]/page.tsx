@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const AlbumDetailsPage = () => {
-  return (
-    <div>AlbumDetailsPage</div>
-  )
-}
+  return <div>AlbumDetailsPage</div>;
+};
 
-export default AlbumDetailsPage
+export default AlbumDetailsPage;

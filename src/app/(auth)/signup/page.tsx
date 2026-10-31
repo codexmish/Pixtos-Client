@@ -47,7 +47,7 @@ const SignupPage = () => {
           </div>
 
           {/* ----form component */}
-          <SignupForm/>
+          <SignupForm />
         </div>
       </div>
     </div>

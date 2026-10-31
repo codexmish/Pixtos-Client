@@ -19,7 +19,6 @@ const SignupForm = () => {
   // -----router
   const router = useRouter();
 
-
   // ------tanstack form
   const form = useForm({
     defaultValues: {
@@ -32,10 +31,9 @@ const SignupForm = () => {
         name: data.value.name,
         email: data.value.email,
         password: data.value.password,
-      }
+      };
 
       console.log(signupData);
-      
     },
   });
 
@@ -118,7 +116,6 @@ const SignupForm = () => {
           }}
         </form.Field>
 
-
         {/* ----------password */}
         <form.Field name="password">
           {(field) => {
@@ -171,7 +168,7 @@ const SignupForm = () => {
 
         {/* ---------button */}
         <Button
-        //   disabled={signupPending}
+          //   disabled={signupPending}
           type="submit"
           className="mt-2 h-11.5 w-full gap-2 rounded-xl bg-black text-sm font-semibold text-white hover:bg-neutral-800"
         >

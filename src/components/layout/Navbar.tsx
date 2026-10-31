@@ -13,9 +13,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-
 // --------dummy user data
-const user = {name: "John Dow", email: "dummy@gmaial.com"}
+const user = { name: "John Dow", email: "dummy@gmaial.com" };
 
 // --------avatar initials, e.g. "John Dow" -> "JD"
 const initials = user.name
@@ -29,7 +28,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   // const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   // -----close dropdown on outside click or Esc
@@ -113,7 +112,7 @@ const Navbar = () => {
       </div>
 
       {/* ------right action button: upload and profile */}
-     
+
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {/* upload button */}
         <button
