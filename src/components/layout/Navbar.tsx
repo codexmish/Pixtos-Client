@@ -12,6 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import Uploadmodel from "../module/photos/Uploadmodel";
 
 // --------dummy user data
 const user = { name: "John Dow", email: "dummy@gmaial.com" };
@@ -27,7 +28,7 @@ const initials = user.name
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  // const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -56,6 +57,17 @@ const Navbar = () => {
   const handleLogout = () => {
     setDropdownOpen(false);
     console.log("logout");
+  };
+
+    // -----handle upload success
+  const handleUploadSuccess = () => {
+    window.dispatchEvent(new CustomEvent("media-uploaded"));
+  };
+
+   // -----handle upload button
+  const handleUploadClick = () => {
+    setIsMobileSidebarOpen(false);
+    setIsUploadOpen(true);
   };
 
   return (
@@ -118,7 +130,7 @@ const Navbar = () => {
         <button
           type="button"
           className="navbar-upload-btn"
-          onClick={() => setIsUploadOpen(true)}
+          onClick={handleUploadClick}
         >
           <UploadIcon className="size-3.5" />
           <span className="hidden sm:inline">Upload</span>
@@ -172,6 +184,12 @@ const Navbar = () => {
           )}
         </div>
       </div>
+
+      <Uploadmodel
+        isOpen={isUploadOpen}
+        onclose={() => setIsUploadOpen(false)}
+        onUploadSuccess={handleUploadSuccess}
+      />
     </nav>
   );
 };

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Film, X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 type UploadModelProps = {
   isOpen: boolean;
@@ -74,7 +75,7 @@ const Uploadmodel = ({
 
   }
 
-  return (
+  return createPortal(
     <div className="modal-backdrop">
       <div className="modal-box-lg">
         {/* ------header */}
@@ -221,7 +222,8 @@ const Uploadmodel = ({
             </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
