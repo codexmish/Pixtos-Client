@@ -14,6 +14,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CreateAlbumModel from "../module/album/CreateAlbumModel";
+import Uploadmodel from "../module/photos/Uploadmodel";
 
 const DUMMY_STATS = {
   mediaCount: 11,
@@ -209,6 +210,12 @@ const Sidebar = () => {
         onclose={() => setCreateAlbumState({ isopen: false, photoIds: [] })}
         onAlbumCreated={handleAlbumCreate}
         initialPhotoIds={createAlbumState.photoIds}
+      />
+
+      <Uploadmodel
+        isOpen={isUploadOpen}
+        onclose={() => setIsUploadOpen(false)}
+        onUploadSuccess={handleUploadSuccess}
       />
     </>
   );
