@@ -27,12 +27,12 @@ const initials = user.name
 
 const Navbar = () => {
   // -----shared actions from context
-  const { toggleSidebar, openUpload } = useUI();
+  const { toggleSidebar, openUpload, searchQuery, setSearchQuery } = useUI();
 
   // -----local states, only navbar uses these
-  const [searchQuery, setSearchQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  
 
   // -----close dropdown on outside click or Esc
   useEffect(() => {

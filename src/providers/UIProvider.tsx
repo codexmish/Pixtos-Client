@@ -24,6 +24,11 @@ type UIContextValue = {
   createAlbum: CreateAlbumState;
   openCreateAlbum: (photoIds?: string[]) => void;
   closeCreateAlbum: () => void;
+
+
+    // -----navbar search
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
 };
 
 // --------create the context (the shared notice board)
@@ -38,6 +43,7 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     isOpen: false,
     photoIds: [],
   });
+    const [searchQuery, setSearchQuery] = useState("");
 
   // -----states and actions passed down through the context
   const value: UIContextValue = {
@@ -61,6 +67,10 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
       setCreateAlbum({ isOpen: true, photoIds });
     },
     closeCreateAlbum: () => setCreateAlbum({ isOpen: false, photoIds: [] }),
+
+        // -----navbar search text
+    searchQuery,
+    setSearchQuery,
   };
 
   return <UIContext value={value}>{children}</UIContext>;
