@@ -1,8 +1,9 @@
 "use client";
 
+import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUI } from "@/providers/UIProvider";
-import { Film, ImageIcon } from "lucide-react";
+import { Film, ImageIcon, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const DUMMY_MEDIA = [
@@ -327,7 +328,7 @@ const PhotosPage = () => {
   const [photos, setPhotos] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [filterType, setFilterType] = useState("all");
-  
+  const [loading, setLoading] = useState(false);
 
   const fetchPhotos = async () => {
     setTimeout(() => {
@@ -363,7 +364,11 @@ const PhotosPage = () => {
         {/* -----right */}
         <div className="flex items-center gap-2.5">
           {/* -----filter tabs (all / photos / videos), active style comes from the tab's data-active */}
-          <Tabs defaultValue={"all"} value={filterType} onValueChange={(value)=>setFilterType(value)}>
+          <Tabs
+            defaultValue={"all"}
+            value={filterType}
+            onValueChange={(value) => setFilterType(value)}
+          >
             <TabsList className="bg-slate-100 p-1 rounded-full">
               <TabsTrigger
                 className="h-auto flex-none gap-1.5 border-0 px-3 py-1 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 cursor-pointer data-active:bg-white data-active:text-slate-900 data-active:font-bold group-data-[variant=default]/tabs-list:data-active:shadow-none"
@@ -391,6 +396,29 @@ const PhotosPage = () => {
       </div>
 
       {/* -----media content */}
+      {loading ? (
+        <Spinner />
+      ) : photos.length === 0 ? (
+        <div className="empty-state-card">
+          <h3 className="text-lg font-medium text-slate-800">
+            {searchQuery ? "No matching media" : "Your media library is empty"}
+          </h3>
+          <p>
+            {searchQuery
+              ? `No media found for ${searchQuery}. Try a different kryword`
+              : "Upload High quality photos and videos from your Device"}
+          </p>
+          <button onClick={openUpload}
+            type="button"
+            className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-full transition cursor-pointer"
+          >
+            <Upload className="size-4" />
+            <span>Upload now</span>
+          </button>
+        </div>
+      ) : (
+        <div>media file</div>
+      )}
     </div>
   );
 };
