@@ -11,10 +11,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import CreateAlbumModel from "../module/album/CreateAlbumModel";
-import Uploadmodel from "../module/photos/Uploadmodel";
+import { useUI } from "@/providers/UIProvider";
 
 const DUMMY_STATS = {
   mediaCount: 11,
@@ -58,53 +57,17 @@ const Sidebar = () => {
     { to: "/trash", label: "Trash", icon: Trash2Icon },
   ];
 
-  const router = useRouter();
   const pathName = usePathname();
-  const [createAlbumState, setCreateAlbumState] = useState({
-    isopen: false,
-    photoIds: [],
-  });
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
 
+  // -----shared state and actions from context
+  const { isMobileSidebarOpen, closeSidebar, openUpload, openCreateAlbum } =
+    useUI();
+
+  // -----close mobile sidebar on route change
   // biome-ignore lint/correctness/useExhaustiveDependencies: close mobile sidebar on route change
   useEffect(() => {
-    setIsMobileSidebarOpen(false);
+    closeSidebar();
   }, [pathName]);
-
-  // -----handle upload success
-  const handleUploadSuccess = () => {
-    window.dispatchEvent(new CustomEvent("media-uploaded"));
-  };
-  // ------submit data to create new album
-  const handleAlbumCreate = (album: any) => {
-    setCreateAlbumState({ isopen: false, photoIds: [] });
-    router.push(`/albums/${album._id}`);
-  };
-
-  // ------open created album
-  const openCreateAlbum = (photoIds = []) => {
-    setCreateAlbumState({ isopen: true, photoIds });
-  };
-
-  // -----handle upload button
-  const handleUploadClick = () => {
-    setIsMobileSidebarOpen(false);
-    setIsUploadOpen(true);
-  };
-
-  // -----handle  create album button
-  const handleCreateAlbumClick = () => {
-    setIsMobileSidebarOpen(false);
-    openCreateAlbum();
-  };
-
-  //     <Sidebar
-  //   onCreateAlbumClick={() => openCreateAlbum()}
-  //   onUploadClick={() => setIsUploadOpen(true)}
-  //   isMobileOpen={isMobileSidebarOpen}
-  //   onCloseMobile={() => setIsMobileSidebarOpen(false)}
-  // />
 
   return (
     <>
@@ -114,7 +77,7 @@ const Sidebar = () => {
         <div
           aria-hidden="true"
           className="sidebar-backdrop"
-          onClick={() => setIsMobileSidebarOpen(false)}
+          onClick={closeSidebar}
         />
       )}
 
@@ -130,7 +93,7 @@ const Sidebar = () => {
             </span>
           </div>
           <button
-            onClick={() => setIsMobileSidebarOpen(false)}
+            onClick={closeSidebar}
             className="sidebar-close-btn"
             type="button"
           >
@@ -142,18 +105,20 @@ const Sidebar = () => {
 
         <div className="space-y-6">
           <div className="space-y-2">
+            {/* -----upload button, opens upload modal through context */}
             <button
               type="button"
-              onClick={handleUploadClick}
+              onClick={openUpload}
               className="sidebar-action-btn"
             >
               <PlusIcon className="size-4" />
               <span>Upload Photos</span>
             </button>
 
+            {/* -----create album button, arrow fn so the click event isn't passed as photoIds */}
             <button
               type="button"
-              onClick={handleCreateAlbumClick}
+              onClick={() => openCreateAlbum()}
               className="sidebar-action-btn"
             >
               <FolderHeartIcon className="size-4" />
@@ -169,7 +134,7 @@ const Sidebar = () => {
                   className={`sidebar-nav-item ${isactive ? "sidebar-nav-item-active" : "sidebar-nav-item-inactive"}`}
                   href={item.to}
                   key={item.to}
-                  onClick={() => setIsMobileSidebarOpen(false)}
+                  onClick={closeSidebar}
                 >
                   <item.icon className="size-5 shrink-0" />
                   <span>{item.label}</span>
@@ -204,19 +169,6 @@ const Sidebar = () => {
           </div>
         </div>
       </aside>
-
-      <CreateAlbumModel
-        isOpen={createAlbumState.isopen}
-        onclose={() => setCreateAlbumState({ isopen: false, photoIds: [] })}
-        onAlbumCreated={handleAlbumCreate}
-        initialPhotoIds={createAlbumState.photoIds}
-      />
-
-      <Uploadmodel
-        isOpen={isUploadOpen}
-        onclose={() => setIsUploadOpen(false)}
-        onUploadSuccess={handleUploadSuccess}
-      />
     </>
   );
 };

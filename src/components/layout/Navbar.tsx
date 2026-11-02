@@ -12,7 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import Uploadmodel from "../module/photos/Uploadmodel";
+import { useUI } from "@/providers/UIProvider";
 
 // --------dummy user data
 const user = { name: "John Dow", email: "dummy@gmaial.com" };
@@ -26,9 +26,11 @@ const initials = user.name
   .toUpperCase();
 
 const Navbar = () => {
+  // -----shared actions from context
+  const { toggleSidebar, openUpload } = useUI();
+
+  // -----local states, only navbar uses these
   const [searchQuery, setSearchQuery] = useState("");
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -59,41 +61,23 @@ const Navbar = () => {
     console.log("logout");
   };
 
-    // -----handle upload success
-  const handleUploadSuccess = () => {
-    window.dispatchEvent(new CustomEvent("media-uploaded"));
-  };
-
-   // -----handle upload button
-  const handleUploadClick = () => {
-    setIsMobileSidebarOpen(false);
-    setIsUploadOpen(true);
-  };
-
   return (
     <nav className="navbar-header">
       {/* ------left brand and mobile hamburger */}
       <div className="navbar-brand">
+        {/* -----hamburger, toggles mobile sidebar through context */}
         <button
           type="button"
           className="navbar-menu-btn"
           title="toggle menu"
           aria-label="Toggle navigation menu"
+          onClick={toggleSidebar}
         >
           <MenuIcon className="size-5" />
         </button>
         <Image src={"/logo.png"} alt="logo" width={32} height={32} />
         <h1 className="navbar-brand-text">Pixtos</h1>
       </div>
-
-      {/* 
-        <Navbar
-  searchQuery={searchQuery}
-  onSearchChange={setSearchQuery}
-  onUploadClick={() => setIsUploadOpen(true)}
-  onToggleSidebar={() => setIsMobileSidebarOpen((prev) => !prev)}
-/>
-        */}
 
       {/* -----center search bar */}
       <div className="flex-1 max-w-2xl relative">
@@ -126,11 +110,11 @@ const Navbar = () => {
       {/* ------right action button: upload and profile */}
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {/* upload button */}
+        {/* -----upload button, opens upload modal through context */}
         <button
           type="button"
           className="navbar-upload-btn"
-          onClick={handleUploadClick}
+          onClick={openUpload}
         >
           <UploadIcon className="size-3.5" />
           <span className="hidden sm:inline">Upload</span>
@@ -184,12 +168,6 @@ const Navbar = () => {
           )}
         </div>
       </div>
-
-      <Uploadmodel
-        isOpen={isUploadOpen}
-        onclose={() => setIsUploadOpen(false)}
-        onUploadSuccess={handleUploadSuccess}
-      />
     </nav>
   );
 };
