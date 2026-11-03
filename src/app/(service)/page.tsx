@@ -1,6 +1,7 @@
 "use client";
 
 import PhotoGird, { type Media } from "@/components/module/photos/PhotoGird";
+import { PhotoLightbox } from "@/components/module/photos/PhotoLightbox";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUI } from "@/providers/UIProvider";
@@ -330,7 +331,7 @@ const PhotosPage = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [filterType, setFilterType] = useState("all");
   const [loading, setLoading] = useState(false);
-  const [activePhoto, setActivePhoto] = useState<Media | null>(null)
+  const [activePhoto, setActivePhoto] = useState<Media | null>(null);
 
   const fetchPhotos = async () => {
     setTimeout(() => {
@@ -447,9 +448,22 @@ const PhotosPage = () => {
           selectId={selectedIds}
           onToggleSelect={toggleSelect}
           onToggleFevorite={toggleFevorite}
-          onSelecctPhoto={(photo)=>setActivePhoto(photo)}
+          onSelecctPhoto={(photo) => setActivePhoto(photo)}
         />
       )}
+
+      <PhotoLightbox
+        photos={photos}
+        currentPhoto={activePhoto}
+        onClose={() => setActivePhoto(null)}
+        onToggleFavorite={toggleFevorite}
+        onTrashPhoto={handleTrash}
+        onAddToAlbum={(photo) => {
+          // -----close lightbox first so its keyboard shortcuts don't fire while the album modal is open
+          setActivePhoto(null);
+          openCreateAlbum([photo._id]);
+        }}
+      />
     </div>
   );
 };

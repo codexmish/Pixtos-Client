@@ -1,6 +1,8 @@
 "use client";
 import { CheckCircle2Icon } from "lucide-react";
+import Image from "next/image";
 import { useMemo } from "react";
+import PhotoCard from "./PhotoCard";
 
 // -----one photo/video item
 export type Media = {
@@ -9,6 +11,11 @@ export type Media = {
   url: string;
   thumbnailUrl: string;
   mediaType: string;
+  format: string;
+  size: number;
+  width: number;
+  height: number;
+  objects: string[];
   isFavorite: boolean;
   createdAt: string;
 };
@@ -60,22 +67,17 @@ const PhotoGird = ({
     return groups;
   }, [photos]);
 
+  const selectGroup = (groupPhotos: Media[]) => {
+    const allSelected = groupPhotos.every((p) => selectId.includes(p._id));
 
-
-  const selectGroup = (groupPhotos: Media[])=>{
-    const allSelected = groupPhotos.every((p)=> selectId.includes(p._id))
-
-    groupPhotos.forEach((p)=>{
-        if(allSelected && selectId.includes(p._id)){
-            onToggleSelect(p._id)
-        }else if(!allSelected && !selectId.includes(p._id)){
-            onToggleSelect(p._id)
-        }
-    })
-  }
-
-
-
+    groupPhotos.forEach((p) => {
+      if (allSelected && selectId.includes(p._id)) {
+        onToggleSelect(p._id);
+      } else if (!allSelected && !selectId.includes(p._id)) {
+        onToggleSelect(p._id);
+      }
+    });
+  };
 
   return (
     <div className="space-y-8 pb-16">
@@ -88,7 +90,7 @@ const PhotoGird = ({
             {/* -----date header */}
             <div className="flex items-center gap-2 backdrop-blur-xs py-2 z-20">
               <button
-              onClick={()=>selectGroup(groupPhotos)}
+                onClick={() => selectGroup(groupPhotos)}
                 type="button"
                 className={`group/btn flex items-center gap-2 text-sm font-medium tracking-tight transition cursor-pointer ${isGroupAllSelected ? "text-red-600" : "text-slate-800 hover:text-red-600"}`}
                 title="Select all in this day"
@@ -101,9 +103,25 @@ const PhotoGird = ({
 
                 <span>{dateLabel}</span>
               </button>
+              <span className="text-xs text-slate-400 font-medium">
+                ({groupPhotos.length})
+              </span>
             </div>
 
             {/* -----media grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+              {groupPhotos.map((photo) => (
+                <PhotoCard
+                  key={photo._id}
+                  photo={photo}
+                  isSelected={selectId.includes(photo._id)}
+                  onToggleSelect={()=>onToggleSelect(photo._id)}
+                  onToggleFevorite={()=>onToggleFevorite(photo._id)}
+                  onClick={()=>onSelecctPhoto(photo)}
+                  onRemoveAlbum={onRemoveAlbum ? ()=> onRemoveAlbum(photo._id) : undefined}
+                />
+              ))}
+            </div>
           </div>
         );
       })}
