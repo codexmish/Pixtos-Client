@@ -1,5 +1,6 @@
 "use client";
 
+import BulkSelectionBar from "@/components/module/photos/BulkSelectionBar";
 import PhotoGird, { type Media } from "@/components/module/photos/PhotoGird";
 import { PhotoLightbox } from "@/components/module/photos/PhotoLightbox";
 import { Spinner } from "@/components/ui/spinner";
@@ -463,6 +464,14 @@ const PhotosPage = () => {
           setActivePhoto(null);
           openCreateAlbum([photo._id]);
         }}
+      />
+
+      <BulkSelectionBar
+        count={selectedIds.length}
+        onclear={() => setSelectedIds([])}
+        onFavorite={handleBulkFavorite}
+        onAddToAlbum={()=>openCreateAlbum?.(selectedIds)}
+        onTrash={handleBulkTrash}
       />
     </div>
   );
