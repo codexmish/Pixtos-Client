@@ -1,5 +1,6 @@
 "use client";
 
+import PhotoGird, { type Media } from "@/components/module/photos/PhotoGird";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUI } from "@/providers/UIProvider";
@@ -326,9 +327,10 @@ export const DUMMY_MEDIA = [
 const PhotosPage = () => {
   const { openCreateAlbum, openUpload, searchQuery } = useUI();
   const [photos, setPhotos] = useState([]);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [filterType, setFilterType] = useState("all");
   const [loading, setLoading] = useState(false);
+  const [activePhoto, setActivePhoto] = useState<Media | null>(null)
 
   const fetchPhotos = async () => {
     setTimeout(() => {
@@ -340,6 +342,28 @@ const PhotosPage = () => {
   useEffect(() => {
     fetchPhotos();
   }, [searchQuery, filterType]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    );
+  };
+
+  const toggleFevorite = async (id: string) => {
+    console.log(id);
+  };
+
+  const handleTrash = async (id: string) => {
+    console.log(id);
+  };
+
+  const handleBulkFavorite = async () => {
+    console.log(selectedIds);
+  };
+
+  const handleBulkTrash = async () => {
+    console.log(selectedIds);
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -408,7 +432,8 @@ const PhotosPage = () => {
               ? `No media found for ${searchQuery}. Try a different kryword`
               : "Upload High quality photos and videos from your Device"}
           </p>
-          <button onClick={openUpload}
+          <button
+            onClick={openUpload}
             type="button"
             className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-full transition cursor-pointer"
           >
@@ -417,7 +442,13 @@ const PhotosPage = () => {
           </button>
         </div>
       ) : (
-        <div>media file</div>
+        <PhotoGird
+          photos={photos}
+          selectId={selectedIds}
+          onToggleSelect={toggleSelect}
+          onToggleFevorite={toggleFevorite}
+          onSelecctPhoto={(photo)=>setActivePhoto(photo)}
+        />
       )}
     </div>
   );
