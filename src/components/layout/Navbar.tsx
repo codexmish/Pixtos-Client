@@ -32,7 +32,6 @@ const Navbar = () => {
   // -----local states, only navbar uses these
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  
 
   // -----close dropdown on outside click or Esc
   useEffect(() => {

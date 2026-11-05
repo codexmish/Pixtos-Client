@@ -25,8 +25,7 @@ type UIContextValue = {
   openCreateAlbum: (photoIds?: string[]) => void;
   closeCreateAlbum: () => void;
 
-
-    // -----navbar search
+  // -----navbar search
   searchQuery: string;
   setSearchQuery: (value: string) => void;
 };
@@ -43,7 +42,7 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     isOpen: false,
     photoIds: [],
   });
-    const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // -----states and actions passed down through the context
   const value: UIContextValue = {
@@ -68,7 +67,7 @@ export const UIProvider = ({ children }: { children: ReactNode }) => {
     },
     closeCreateAlbum: () => setCreateAlbum({ isOpen: false, photoIds: [] }),
 
-        // -----navbar search text
+    // -----navbar search text
     searchQuery,
     setSearchQuery,
   };

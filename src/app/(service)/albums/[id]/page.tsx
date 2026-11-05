@@ -157,14 +157,13 @@ const AlbumDetailsPage = () => {
         </div>
       )}
 
-
       {/* ----ligtbox for preview */}
       <PhotoLightbox
-      photos={album.photos || []}
-      currentPhoto={activePhoto}
-      onClose={()=>setActivePhoto(null)}
-      onToggleFavorite={toggleFavorite}
-      onTrashPhoto={(photoId)=>handleRemoveFromAlbum(photoId)}
+        photos={album.photos || []}
+        currentPhoto={activePhoto}
+        onClose={() => setActivePhoto(null)}
+        onToggleFavorite={toggleFavorite}
+        onTrashPhoto={(photoId) => handleRemoveFromAlbum(photoId)}
       />
 
       {/* ----add photos model */}
@@ -172,9 +171,9 @@ const AlbumDetailsPage = () => {
         isOpen={isAddPhotosModelOpen}
         albumId={album._id}
         existingPhotoIds={existingPhotoIds}
-        onClose={()=>setIsAddPhotosModelOpen(false)}
-        onPhotosAdded={(updatedAlbem)=>{
-          setAlbum(updatedAlbem)
+        onClose={() => setIsAddPhotosModelOpen(false)}
+        onPhotosAdded={(updatedAlbem) => {
+          setAlbum(updatedAlbem);
         }}
       />
     </div>

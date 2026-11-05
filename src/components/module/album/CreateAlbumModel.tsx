@@ -43,7 +43,9 @@ const CreateAlbumModel = ({
         <div className="modal-header">
           <div className="flex items-center gap-2.5">
             <FolderPlusIcon className="size-5 text-red-600" />
-            <h3 className="text-base font-semibold text-slate-800">New Album</h3>
+            <h3 className="text-base font-semibold text-slate-800">
+              New Album
+            </h3>
           </div>
           <button
             type="button"

@@ -470,7 +470,7 @@ const PhotosPage = () => {
         count={selectedIds.length}
         onclear={() => setSelectedIds([])}
         onFavorite={handleBulkFavorite}
-        onAddToAlbum={()=>openCreateAlbum?.(selectedIds)}
+        onAddToAlbum={() => openCreateAlbum?.(selectedIds)}
         onTrash={handleBulkTrash}
       />
     </div>

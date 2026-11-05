@@ -158,7 +158,8 @@ const AlbumsPage = () => {
 
                   {/* ----action button on card hover */}
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                    <button onClick={(e)=>handleDeleteAlbum(e, album._id)}
+                    <button
+                      onClick={(e) => handleDeleteAlbum(e, album._id)}
                       className="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition cursor-pointer"
                       title="Delete album"
                       type="button"

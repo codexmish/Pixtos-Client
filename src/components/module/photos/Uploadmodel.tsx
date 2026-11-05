@@ -71,9 +71,7 @@ const Uploadmodel = ({
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleUpload = ()=>{
-
-  }
+  const handleUpload = () => {};
 
   return createPortal(
     <div className="modal-backdrop">
@@ -211,15 +209,23 @@ const Uploadmodel = ({
 
         {/* ----footer */}
         <div className="modal-footer">
-            <div className="flex items-center gap-2">
-                <button onClick={handleClose} className="btn-secondary" type="button">
-                    Cancel
-                </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleClose}
+              className="btn-secondary"
+              type="button"
+            >
+              Cancel
+            </button>
 
-                <button onClick={handleUpload} className="btn-primary" type="button">
-                    Submit
-                </button>
-            </div>
+            <button
+              onClick={handleUpload}
+              className="btn-primary"
+              type="button"
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
     </div>,

@@ -1,4 +1,10 @@
-import { CheckSquareIcon, FolderPlusIcon, StarIcon, Trash2Icon, XIcon } from "lucide-react";
+import {
+  CheckSquareIcon,
+  FolderPlusIcon,
+  StarIcon,
+  Trash2Icon,
+  XIcon,
+} from "lucide-react";
 
 // -----props the bulk bar needs from the page
 type BulkSelectionBarProps = {
@@ -40,7 +46,6 @@ const BulkSelectionBar = ({
           <span className="hidden sm:inline">Favorite</span>
         </button>
 
-
         <button onClick={onAddToAlbum} type="button" className="bulk-bar-btn">
           <FolderPlusIcon className="size-3.5 text-slate-600" />
           <span className="hidden sm:inline">Add To Album</span>
@@ -50,7 +55,6 @@ const BulkSelectionBar = ({
           <Trash2Icon className="size-3.5 text-slate-600" />
           <span className="hidden sm:inline">Move To Trash</span>
         </button>
-
       </div>
     </div>
   );

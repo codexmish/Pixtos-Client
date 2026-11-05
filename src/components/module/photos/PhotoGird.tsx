@@ -115,10 +115,12 @@ const PhotoGird = ({
                   key={photo._id}
                   photo={photo}
                   isSelected={selectId.includes(photo._id)}
-                  onToggleSelect={()=>onToggleSelect(photo._id)}
-                  onToggleFevorite={()=>onToggleFevorite(photo._id)}
-                  onClick={()=>onSelecctPhoto(photo)}
-                  onRemoveAlbum={onRemoveAlbum ? ()=> onRemoveAlbum(photo._id) : undefined}
+                  onToggleSelect={() => onToggleSelect(photo._id)}
+                  onToggleFevorite={() => onToggleFevorite(photo._id)}
+                  onClick={() => onSelecctPhoto(photo)}
+                  onRemoveAlbum={
+                    onRemoveAlbum ? () => onRemoveAlbum(photo._id) : undefined
+                  }
                 />
               ))}
             </div>
