@@ -26,7 +26,7 @@ export const DUMMY_ALBUM_DETAIL = {
     name: "GreatStack",
     email: "user.greatstack@gmail.com",
   },
-  photos: DUMMY_MEDIA,
+  photos: DUMMY_MEDIA.slice(0, 4),
   createdAt: "2026-10-15T06:54:01.552Z",
   updatedAt: "2026-10-15T06:55:10.555Z",
 };

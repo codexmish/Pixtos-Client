@@ -7,6 +7,8 @@ import { type AlbumDetail, DUMMY_ALBUM_DETAIL } from "../page";
 import { Spinner } from "@/components/ui/spinner";
 import { ArrowLeft, Calendar, Plus, Trash2 } from "lucide-react";
 import PhotoGird from "@/components/module/photos/PhotoGird";
+import AddPhotosModel from "@/components/module/album/AddPhotosModel";
+import { PhotoLightbox } from "@/components/module/photos/PhotoLightbox";
 
 const AlbumDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -145,7 +147,7 @@ const AlbumDetailsPage = () => {
           <h3>Album is empty</h3>
           <p>Add photos your existing library to populate this album</p>
           <button
-          onClick={()=>setIsAddPhotosModelOpen(true)}
+            onClick={() => setIsAddPhotosModelOpen(true)}
             type="button"
             className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-full transition cursor-pointer"
           >
@@ -154,6 +156,27 @@ const AlbumDetailsPage = () => {
           </button>
         </div>
       )}
+
+
+      {/* ----ligtbox for preview */}
+      <PhotoLightbox
+      photos={album.photos || []}
+      currentPhoto={activePhoto}
+      onClose={()=>setActivePhoto(null)}
+      onToggleFavorite={toggleFavorite}
+      onTrashPhoto={(photoId)=>handleRemoveFromAlbum(photoId)}
+      />
+
+      {/* ----add photos model */}
+      <AddPhotosModel
+        isOpen={isAddPhotosModelOpen}
+        albumId={album._id}
+        existingPhotoIds={existingPhotoIds}
+        onClose={()=>setIsAddPhotosModelOpen(false)}
+        onPhotosAdded={(updatedAlbem)=>{
+          setAlbum(updatedAlbem)
+        }}
+      />
     </div>
   );
 };
