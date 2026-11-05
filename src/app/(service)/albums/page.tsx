@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 
 // -----one album with its photos
-type AlbumDetail = {
+export type AlbumDetail = {
   _id: string;
   title: string;
   description: string;
