@@ -2,7 +2,13 @@
 import type { Media } from "@/components/module/photos/PhotoGird";
 import { useEffect, useState } from "react";
 import { DUMMY_MEDIA } from "../page";
-import { Divide, MopIcon, PlayIcon, Trash2Icon } from "lucide-react";
+import {
+  Divide,
+  MopIcon,
+  PlayIcon,
+  RotateCcwIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
 
@@ -24,6 +30,14 @@ const TrashPage = () => {
 
   const handleEmptyTrash = async () => {
     console.log("handle empty trash");
+  };
+
+  const handleRestore = async (id: string) => {
+    console.log(id);
+  };
+
+  const handleDeletePermanent = async (id: string) => {
+    console.log(id);
   };
 
   return (
@@ -94,6 +108,32 @@ const TrashPage = () => {
                       <span>Video</span>
                     </div>
                   )}
+                </div>
+
+                <div className="p-2 flex items-center justify-between bg-white border-t border-slate-100">
+                  <span className="text-xs font-medium text-slate-700 truncate pr-2">
+                    {photo.title}
+                  </span>
+
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => handleRestore(photo._id)}
+                      type="button"
+                      className="p-1.5 hover:bg-orange-50 text-orange-600 rounded-lg transition cursor-pointer"
+                      title="Restor to Library"
+                    >
+                      <RotateCcwIcon className="size-3.5" />
+                    </button>
+
+                    <button
+                      onClick={() => handleDeletePermanent(photo._id)}
+                      type="button"
+                      className="p-1.5 hover:bg-rose-50 text-rose-600 rounded-lg transition cursor-pointer"
+                      title="Delete permanently"
+                    >
+                      <Trash2Icon className="size-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
