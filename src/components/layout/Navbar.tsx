@@ -12,22 +12,20 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { useGetMe } from "@/hooks";
 import { useUI } from "@/providers/UIProvider";
-
-// --------dummy user data
-const user = { name: "John Dow", email: "dummy@gmaial.com" };
-
-// --------avatar initials, e.g. "John Dow" -> "JD"
-const initials = user.name
-  .split(" ")
-  .map((word) => word[0])
-  .join("")
-  .slice(0, 2)
-  .toUpperCase();
+import { initialsOf } from "@/utils";
 
 const Navbar = () => {
   // -----shared actions from context
   const { toggleSidebar, openUpload, searchQuery, setSearchQuery } = useUI();
+
+  // -----getting logged in user data (/auth/me)
+  const { data: userData, isLoading: userDataLoading } = useGetMe();
+  const user = userData?.data;
+
+  // --------avatar initials, e.g. "John Dow" -> "JD"
+  const initials = user ? initialsOf(user.name) : "";
 
   // -----local states, only navbar uses these
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -120,52 +118,78 @@ const Navbar = () => {
         </button>
 
         {/* ----user profile menu */}
-        <div className="relative" ref={profileRef}>
-          <button
-            type="button"
-            className="navbar-avatar-btn"
-            aria-label="Open profile menu"
-            aria-haspopup="menu"
-            aria-expanded={dropdownOpen}
-            onClick={() => setDropdownOpen((prev) => !prev)}
+        {userDataLoading ? (
+          // -----loading user, grey circle in the avatar's place
+          <div className="size-8 sm:size-9 rounded-full bg-slate-200 animate-pulse shrink-0" />
+        ) : !user ? (
+          // -----not logged in (or session expired)
+          <Link
+            href="/signin"
+            className="text-xs font-semibold text-slate-900 hover:underline shrink-0"
           >
-            {initials}
-          </button>
+            Sign in
+          </Link>
+        ) : (
+          <div className="relative" ref={profileRef}>
+            <button
+              type="button"
+              className="navbar-avatar-btn overflow-hidden"
+              aria-label="Open profile menu"
+              aria-haspopup="menu"
+              aria-expanded={dropdownOpen}
+              onClick={() => setDropdownOpen((prev) => !prev)}
+            >
+              {user.avatar ? (
+                <Image
+                  src={user.avatar}
+                  alt={user.name}
+                  width={36}
+                  height={36}
+                  unoptimized
+                  className="size-full object-cover"
+                />
+              ) : (
+                initials
+              )}
+            </button>
 
-          {dropdownOpen && (
-            <div className="navbar-dropdown p-2 shadow-lg" role="menu">
-              {/* name and email */}
-              <div className="px-3 py-2.5 border-b border-slate-100 mb-1">
-                <p className="text-sm font-semibold text-slate-800 truncate">
-                  {user.name}
-                </p>
-                <p className="text-xs text-slate-500 truncate">{user.email}</p>
+            {dropdownOpen && (
+              <div className="navbar-dropdown p-2 shadow-lg" role="menu">
+                {/* name and email */}
+                <div className="px-3 py-2.5 border-b border-slate-100 mb-1">
+                  <p className="text-sm font-semibold text-slate-800 truncate">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">
+                    {user.email}
+                  </p>
+                </div>
+
+                {/* profile */}
+                <Link
+                  href="/profile"
+                  role="menuitem"
+                  onClick={() => setDropdownOpen(false)}
+                  className="w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2 transition"
+                >
+                  <UserIcon className="size-4" />
+                  Profile
+                </Link>
+
+                {/* logout */}
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="navbar-logout-btn"
+                  onClick={handleLogout}
+                >
+                  <LogOutIcon className="size-4" />
+                  Logout
+                </button>
               </div>
-
-              {/* profile */}
-              <Link
-                href="/profile"
-                role="menuitem"
-                onClick={() => setDropdownOpen(false)}
-                className="w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-xl flex items-center gap-2 transition"
-              >
-                <UserIcon className="size-4" />
-                Profile
-              </Link>
-
-              {/* logout */}
-              <button
-                type="button"
-                role="menuitem"
-                className="navbar-logout-btn"
-                onClick={handleLogout}
-              >
-                <LogOutIcon className="size-4" />
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   );

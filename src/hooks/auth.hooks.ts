@@ -1,12 +1,13 @@
 import {
     forgetPassword,
+    getMe,
     resendOtp,
     resetPassword,
     userSignin,
     userSignup,
     userVerify,
 } from "@/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // -------user signup
 export function useSignup(){
@@ -45,6 +46,15 @@ export function useForgetPassword(){
 export function useResetPassword(){
     return useMutation({
         mutationFn: resetPassword,
+    })
+}
+
+// -------get me (signin / otp verify refresh this by invalidating ["user"])
+export function useGetMe(){
+    return useQuery({
+        queryKey: ["user"],
+        queryFn: getMe,
+        retry: false,
     })
 }
 

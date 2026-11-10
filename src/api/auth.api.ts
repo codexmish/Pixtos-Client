@@ -1,5 +1,12 @@
 import apiClient from "@/lib/apiClient";
-import { IOtpVerify, IResetPassword, ISignIn, ISignup } from "@/types";
+import {
+    IApiResponse,
+    IOtpVerify,
+    IResetPassword,
+    ISignIn,
+    ISignup,
+    IUser,
+} from "@/types";
 
 // user signup (server sends an otp to the email)
 export function userSignup(payload: ISignup){
@@ -24,6 +31,11 @@ export function forgetPassword(email: string){
 // reset password with code
 export function resetPassword(payload: IResetPassword){
     return apiClient("/auth/reset-password", {method: "POST", body: payload})
+}
+
+// get logged in user (uses the accessToken cookie)
+export function getMe(){
+    return apiClient<IApiResponse<IUser>>("/auth/me")
 }
 
 // user signIn
