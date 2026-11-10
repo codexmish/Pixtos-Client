@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import { IOtpVerify, ISignIn, ISignup } from "@/types";
+import { IOtpVerify, IResetPassword, ISignIn, ISignup } from "@/types";
 
 // user signup (server sends an otp to the email)
 export function userSignup(payload: ISignup){
@@ -14,6 +14,16 @@ export function userVerify(payload: IOtpVerify){
 // resend otp (1 minute cooldown in backend)
 export function resendOtp(email: string){
     return apiClient("/auth/resend-otp", {method: "POST", body: {email}})
+}
+
+// forget password (sends reset code to email)
+export function forgetPassword(email: string){
+    return apiClient("/auth/forget-password", {method: "POST", body: {email}})
+}
+
+// reset password with code
+export function resetPassword(payload: IResetPassword){
+    return apiClient("/auth/reset-password", {method: "POST", body: payload})
 }
 
 // user signIn
