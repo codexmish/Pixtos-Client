@@ -11,9 +11,9 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "../ui/toast";
 import Link from "next/link";
-import { FetchError } from "ofetch";
 import { userSignupSchema } from "@/validations";
 import { useSignup } from "@/hooks";
+import { errorMessage } from "@/utils";
 
 const SignupForm = () => {
   // -----pass show state
@@ -49,15 +49,17 @@ const SignupForm = () => {
             description: "We sent a 6-digit OTP to verify your email",
             type: "success",
           });
-        },
-        onError: (error) => {
-          // -----show the server message (e.g. "User already exist with this email")
-          const message =
-            error instanceof FetchError ? error.data?.message : undefined;
 
+          // -----go verify the otp, email goes in the url so the otp page knows it
+          router.push(
+            `/otp-verify?email=${encodeURIComponent(data.value.email)}`,
+          );
+        },
+        onError: (err) => {
+          // -----show the server message (e.g. "User already exist with this email")
           toast.add({
             title: "Signup failed",
-            description: message ?? "Something Went Wrong",
+            description: errorMessage(err),
             type: "error",
           });
         },
