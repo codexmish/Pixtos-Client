@@ -9,10 +9,20 @@ import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
+import { userSignInSchema } from "@/validations";
+import { useSignin } from "@/hooks";
 
 const SigninForm = () => {
   // -----pass show state
   const [showPass, setShowPass] = useState(false);
+  const router = useRouter()
+
+
+  // -----tanstack query data destracture
+  const { mutate: signIn, isPending: signinPending } = useSignin();
+
+
+
 
   // ------tanstack form
   const form = useForm({
@@ -20,13 +30,31 @@ const SigninForm = () => {
       email: "",
       password: "",
     },
+    validators: {
+      onSubmit: userSignInSchema
+    },
     onSubmit: (data) => {
       const loginData = {
         email: data.value.email,
         password: data.value.password,
       };
-
-      console.log(loginData);
+      signIn(loginData,{
+        onSuccess: ()=>{
+          toast.add({
+            title: "SignIn successfull",
+            description: "Welcome Back",
+            type: "success",
+          });
+          router.push("/");
+        },
+        onError: ()=>{
+          toast.add({
+            title: "Authorization failed",
+            description: "Something Went Wrong",
+            type: "error",
+          });
+        }
+      })
     },
   });
 
@@ -140,14 +168,13 @@ const SigninForm = () => {
           type="submit"
           className="h-11.5 w-full gap-2 rounded-xl bg-black text-sm font-semibold text-white hover:bg-neutral-800"
         >
-          {/* {signinPending ? (
+          {signinPending ? (
             <>
               Signing in <Spinner />
             </>
           ) : (
             "Sign in"
-          )} */}
-          Sign in
+          )}
         </Button>
       </form>
 
