@@ -73,6 +73,15 @@ export const changePasswordSchema = z
 		},
 	);
 
+// -----update profile validation
+export const updateProfileSchema = z.object({
+	name: z
+		.string("Name is required")
+		.trim()
+		.min(3, "name must be 3 caracters long")
+		.max(50, "name max 50 caracters long"),
+});
+
 // ------user signin validation
 export const userSignInSchema = z.object({
 	email: z.email("Invalid email address").toLowerCase(),

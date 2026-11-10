@@ -6,6 +6,7 @@ import {
     IResetPassword,
     ISignIn,
     ISignup,
+    IUpdateProfile,
     IUser,
 } from "@/types";
 
@@ -52,4 +53,17 @@ export function userLogout(){
 // change password (logged in user)
 export function changePassword(payload: IChangePassword){
     return apiClient("/auth/change-password", {method: "PATCH", body: payload})
+}
+
+// update profile (name)
+export function updateProfile(payload: IUpdateProfile){
+    return apiClient<IApiResponse<IUser>>("/auth/update-profile", {method: "PATCH", body: payload})
+}
+
+// update avatar (image goes as form-data, field name "avatar")
+export function updateAvatar(file: File){
+    const formData = new FormData()
+    formData.append("avatar", file)
+
+    return apiClient<IApiResponse<IUser>>("/auth/update-avatar", {method: "PATCH", body: formData})
 }

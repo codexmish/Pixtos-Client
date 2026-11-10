@@ -4,6 +4,8 @@ import {
     getMe,
     resendOtp,
     resetPassword,
+    updateAvatar,
+    updateProfile,
     userLogout,
     userSignin,
     userSignup,
@@ -91,5 +93,31 @@ export function useLogout(){
 export function useChangePassword(){
     return useMutation({
         mutationFn: changePassword,
+    })
+}
+
+// -------update profile (name)
+export function useUpdateProfile(){
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: updateProfile,
+        onSuccess: ()=>{
+            // -----navbar and profile page get the new name
+            queryClient.invalidateQueries({queryKey: ["user"]})
+        }
+    })
+}
+
+// -------update avatar
+export function useUpdateAvatar(){
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: updateAvatar,
+        onSuccess: ()=>{
+            // -----navbar and profile page get the new avatar
+            queryClient.invalidateQueries({queryKey: ["user"]})
+        }
     })
 }

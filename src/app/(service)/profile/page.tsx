@@ -6,12 +6,12 @@ import {
   MailIcon,
   ShieldIcon,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import ChangePasswordForm from "@/components/form/ChangePasswordForm";
+import UpdateProfileForm from "@/components/form/UpdateProfileForm";
+import AvatarUploader from "@/components/module/profile/AvatarUploader";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetMe } from "@/hooks";
-import { initialsOf } from "@/utils";
 
 const ProfilePage = () => {
   // -----getting logged in user data (/auth/me)
@@ -48,7 +48,7 @@ const ProfilePage = () => {
             Profile
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Your account details and password
+            Your account details, photo and password
           </p>
         </div>
       </div>
@@ -76,21 +76,8 @@ const ProfilePage = () => {
           {/* -----profile card */}
           <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80">
             <div className="flex flex-col items-center text-center">
-              {/* ----avatar (photo or initials) */}
-              <div className="size-24 rounded-full overflow-hidden bg-slate-900 text-white text-2xl font-semibold flex items-center justify-center">
-                {user.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt={user.name}
-                    width={96}
-                    height={96}
-                    unoptimized
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  initialsOf(user.name)
-                )}
-              </div>
+              {/* ----avatar with change button */}
+              <AvatarUploader name={user.name} avatar={user.avatar} />
 
               <h3 className="mt-4 text-lg font-semibold text-slate-900">
                 {user.name}
@@ -127,16 +114,29 @@ const ProfilePage = () => {
             </dl>
           </section>
 
-          {/* -----change password card */}
-          <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80">
-            <h3 className="text-lg font-semibold text-slate-900">
-              Change password
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5 mb-6">
-              Enter your current password, then choose a new one
-            </p>
-            <ChangePasswordForm />
-          </section>
+          <div className="space-y-6">
+            {/* -----edit profile card */}
+            <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80">
+              <h3 className="text-lg font-semibold text-slate-900">
+                Edit profile
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5 mb-6">
+                Change the name shown on your account
+              </p>
+              <UpdateProfileForm name={user.name} email={user.email} />
+            </section>
+
+            {/* -----change password card */}
+            <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80">
+              <h3 className="text-lg font-semibold text-slate-900">
+                Change password
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5 mb-6">
+                Enter your current password, then choose a new one
+              </p>
+              <ChangePasswordForm />
+            </section>
+          </div>
         </div>
       )}
     </div>
