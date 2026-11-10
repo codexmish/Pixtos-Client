@@ -1,8 +1,10 @@
 import {
+    changePassword,
     forgetPassword,
     getMe,
     resendOtp,
     resetPassword,
+    userLogout,
     userSignin,
     userSignup,
     userVerify,
@@ -70,4 +72,24 @@ export function useSignin(){
         }
     }
     )
+}
+
+// -------user logout
+export function useLogout(){
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: userLogout,
+        onSuccess: ()=>{
+            // -----forget the logged out user's data
+            queryClient.removeQueries({queryKey: ["user"]})
+        }
+    })
+}
+
+// -------change password
+export function useChangePassword(){
+    return useMutation({
+        mutationFn: changePassword,
+    })
 }

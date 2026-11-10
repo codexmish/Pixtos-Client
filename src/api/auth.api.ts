@@ -1,6 +1,7 @@
 import apiClient from "@/lib/apiClient";
 import {
     IApiResponse,
+    IChangePassword,
     IOtpVerify,
     IResetPassword,
     ISignIn,
@@ -41,4 +42,14 @@ export function getMe(){
 // user signIn
 export function userSignin(payload: ISignIn){
     return apiClient("/auth/signin", {method: "POST", body: payload})
+}
+
+// user logout (server clears the token cookies)
+export function userLogout(){
+    return apiClient("/auth/logout", {method: "POST"})
+}
+
+// change password (logged in user)
+export function changePassword(payload: IChangePassword){
+    return apiClient("/auth/change-password", {method: "PATCH", body: payload})
 }

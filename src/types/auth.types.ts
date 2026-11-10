@@ -19,3 +19,8 @@ export interface IResetPassword {
 	otp: string;
 	newPassword: string;
 }
+
+export interface IChangePassword {
+	oldPassword: string;
+	newPassword: string;
+}

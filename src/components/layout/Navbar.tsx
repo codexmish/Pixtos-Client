@@ -11,10 +11,12 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useGetMe } from "@/hooks";
+import { useGetMe, useLogout } from "@/hooks";
 import { useUI } from "@/providers/UIProvider";
-import { initialsOf } from "@/utils";
+import { errorMessage, initialsOf } from "@/utils";
+import { toast } from "../ui/toast";
 
 const Navbar = () => {
   // -----shared actions from context
@@ -52,10 +54,30 @@ const Navbar = () => {
     };
   }, [dropdownOpen]);
 
-  // -----logout (demo for now)
+  // -----logout
+  const router = useRouter();
+  const { mutate: logOut } = useLogout();
+
   const handleLogout = () => {
     setDropdownOpen(false);
-    console.log("logout");
+
+    logOut(undefined, {
+      onSuccess: () => {
+        toast.add({
+          title: "Logged out",
+          description: "Sign in again to see your photos",
+          type: "success",
+        });
+        router.push("/signin");
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Logout failed",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
   return (

@@ -44,6 +44,35 @@ export const resetPasswordSchema = z
 		path: ["confirmPassword"],
 	});
 
+// -----change password validation
+export const changePasswordSchema = z
+	.object({
+		oldPassword: z
+			.string("Current password is required")
+			.min(8, "password must be 8 caracters long")
+			.max(32, "password max 32 caracters long"),
+		newPassword: z
+			.string("New password is required")
+			.min(8, "password must be 8 caracters long")
+			.max(32, "password max 32 caracters long"),
+		confirmPassword: z.string("Please confirm your password"),
+	})
+	// ----both new password fields must match
+	.refine((data) => data.newPassword === data.confirmPassword, {
+		message: "Passwords don't match",
+		path: ["confirmPassword"],
+	})
+	// ----backend also refuses the same password, so catch it here first
+	// ----(checked only after the length is ok, so one error shows at a time)
+	.refine(
+		(data) =>
+			data.newPassword.length < 8 || data.oldPassword !== data.newPassword,
+		{
+			message: "New password must be different from current password",
+			path: ["newPassword"],
+		},
+	);
+
 // ------user signin validation
 export const userSignInSchema = z.object({
 	email: z.email("Invalid email address").toLowerCase(),
