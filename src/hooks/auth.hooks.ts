@@ -1,6 +1,12 @@
-import { userSignin } from "@/api";
+import { userSignin, userSignup } from "@/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+// -------user signup
+export function useSignup(){
+    return useMutation({
+        mutationFn: userSignup,
+    })
+}
 
 
 // -------user signin

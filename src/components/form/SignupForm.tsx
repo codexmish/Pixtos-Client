@@ -11,6 +11,9 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "../ui/toast";
 import Link from "next/link";
+import { FetchError } from "ofetch";
+import { userSignupSchema } from "@/validations";
+import { useSignup } from "@/hooks";
 
 const SignupForm = () => {
   // -----pass show state
@@ -19,12 +22,18 @@ const SignupForm = () => {
   // -----router
   const router = useRouter();
 
+  // -----tanstack query data destracture
+  const { mutate: signUp, isPending: signupPending } = useSignup();
+
   // ------tanstack form
   const form = useForm({
     defaultValues: {
       name: "",
       email: "",
       password: "",
+    },
+    validators: {
+      onSubmit: userSignupSchema,
     },
     onSubmit: (data) => {
       const signupData = {
@@ -33,7 +42,26 @@ const SignupForm = () => {
         password: data.value.password,
       };
 
-      console.log(signupData);
+      signUp(signupData, {
+        onSuccess: () => {
+          toast.add({
+            title: "Check your email",
+            description: "We sent a 6-digit OTP to verify your email",
+            type: "success",
+          });
+        },
+        onError: (error) => {
+          // -----show the server message (e.g. "User already exist with this email")
+          const message =
+            error instanceof FetchError ? error.data?.message : undefined;
+
+          toast.add({
+            title: "Signup failed",
+            description: message ?? "Something Went Wrong",
+            type: "error",
+          });
+        },
+      });
     },
   });
 
@@ -172,14 +200,13 @@ const SignupForm = () => {
           type="submit"
           className="mt-2 h-11.5 w-full gap-2 rounded-xl bg-black text-sm font-semibold text-white hover:bg-neutral-800"
         >
-          {/* {signupPending ? (
+          {signupPending ? (
             <>
               Loading.. <Spinner />
             </>
           ) : (
             "Sign Up"
-          )} */}
-          Sign Up
+          )}
         </Button>
       </form>
 
