@@ -12,31 +12,14 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useGetStorageStats } from "@/hooks";
 import { useUI } from "@/providers/UIProvider";
 
-const DUMMY_STATS = {
-  mediaCount: 11,
-  imageCount: 10,
-  videoCount: 1,
-  favoriteCount: 0,
-  totalBytes: 11535024,
-  albumCount: 1,
-};
-
 const Sidebar = () => {
-  // ----storage stats part
-  const [stats, setStats] = useState(null as any);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      setStats(DUMMY_STATS);
-    };
-
-    fetchStats();
-    const interVal = setInterval(fetchStats, 15000);
-    return () => clearInterval(interVal);
-  }, []);
+  // ----storage stats part (refreshes by itself after upload, trash, restore, delete)
+  const { data: statsData } = useGetStorageStats();
+  const stats = statsData?.data;
 
   const storageUsed = stats?.totalBytes
     ? (stats.totalBytes / (1024 * 1024)).toFixed(1)

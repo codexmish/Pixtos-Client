@@ -20,6 +20,16 @@ export interface IMedia {
   updatedAt: string;
 }
 
+// -----storage stats for the sidebar (GET /media/stats, names same as server)
+export interface IStorageStats {
+  mediaCount: number;
+  imageCount: number;
+  videoCount: number;
+  fevortotalCount: number;
+  albumCount: number;
+  totalBytes: number;
+}
+
 // -----filters for GET /media (search text, photo/video tab, only favorites)
 export interface IMediaQuery {
   q?: string;

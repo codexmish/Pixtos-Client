@@ -1,7 +1,4 @@
 "use client";
-import type { Media } from "@/components/module/photos/PhotoGird";
-import { useEffect, useState } from "react";
-import { DUMMY_MEDIA } from "../page";
 import {
   Divide,
   MopIcon,
@@ -11,33 +8,83 @@ import {
 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
+import { toast } from "@/components/ui/toast";
+import {
+  useDeleteMedia,
+  useEmptyTrash,
+  useGetTrash,
+  useRestoreMedia,
+} from "@/hooks";
+import { errorMessage } from "@/utils";
 
 const TrashPage = () => {
-  const [photos, setPhotos] = useState<Media[]>([]);
-  const [loading, setLoading] = useState(true);
+  // -----getting trash media
+  const { data: trashData, isLoading: loading } = useGetTrash();
+  const photos = trashData?.data ?? [];
 
-  const fetchTrash = async () => {
-    setTimeout(() => {
-      setPhotos(DUMMY_MEDIA);
-      setLoading(false);
-    }, 1000);
+  // -----tanstack query data destracture
+  const { mutate: clearTrash } = useEmptyTrash();
+  const { mutate: restore } = useRestoreMedia();
+  const { mutate: deleteForever } = useDeleteMedia();
+
+  // -----delete everything in trash permanently
+  const handleEmptyTrash = () => {
+    clearTrash(undefined, {
+      onSuccess: () => {
+        toast.add({
+          title: "Trash emptied",
+          description: "All items are permanently deleted",
+          type: "success",
+        });
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Trash not emptied",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: load trash once on mount
-  useEffect(() => {
-    fetchTrash();
-  }, []);
-
-  const handleEmptyTrash = async () => {
-    console.log("handle empty trash");
+  // -----restore back to library
+  const handleRestore = (id: string) => {
+    restore(id, {
+      onSuccess: () => {
+        toast.add({
+          title: "Restored",
+          description: "It's back in your library",
+          type: "success",
+        });
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Not restored",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
-  const handleRestore = async (id: string) => {
-    console.log(id);
-  };
-
-  const handleDeletePermanent = async (id: string) => {
-    console.log(id);
+  // -----delete one item permanently
+  const handleDeletePermanent = (id: string) => {
+    deleteForever(id, {
+      onSuccess: () => {
+        toast.add({
+          title: "Deleted permanently",
+          description: "This item can't be restored now",
+          type: "success",
+        });
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Not deleted",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
   return (
