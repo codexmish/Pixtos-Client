@@ -15,14 +15,10 @@ import { useSignin } from "@/hooks";
 const SigninForm = () => {
   // -----pass show state
   const [showPass, setShowPass] = useState(false);
-  const router = useRouter()
-
+  const router = useRouter();
 
   // -----tanstack query data destracture
   const { mutate: signIn, isPending: signinPending } = useSignin();
-
-
-
 
   // ------tanstack form
   const form = useForm({
@@ -31,15 +27,15 @@ const SigninForm = () => {
       password: "",
     },
     validators: {
-      onSubmit: userSignInSchema
+      onSubmit: userSignInSchema,
     },
     onSubmit: (data) => {
       const loginData = {
         email: data.value.email,
         password: data.value.password,
       };
-      signIn(loginData,{
-        onSuccess: ()=>{
+      signIn(loginData, {
+        onSuccess: () => {
           toast.add({
             title: "SignIn successfull",
             description: "Welcome Back",
@@ -47,14 +43,14 @@ const SigninForm = () => {
           });
           router.push("/");
         },
-        onError: ()=>{
+        onError: () => {
           toast.add({
             title: "Authorization failed",
             description: "Something Went Wrong",
             type: "error",
           });
-        }
-      })
+        },
+      });
     },
   });
 

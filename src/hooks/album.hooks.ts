@@ -1,77 +1,77 @@
 import {
-    addPhotosToAlbum,
-    createAlbum,
-    deleteAlbum,
-    getAlbumById,
-    getAlbums,
-    removePhotoFromAlbum,
+  addPhotosToAlbum,
+  createAlbum,
+  deleteAlbum,
+  getAlbumById,
+  getAlbums,
+  removePhotoFromAlbum,
 } from "@/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // -------get my albums
-export function useGetAlbums(){
-    return useQuery({
-        queryKey: ["albums"],
-        queryFn: getAlbums,
-    })
+export function useGetAlbums() {
+  return useQuery({
+    queryKey: ["albums"],
+    queryFn: getAlbums,
+  });
 }
 
 // -------get one album with its photos
-export function useGetAlbum(id: string){
-    return useQuery({
-        queryKey: ["albums", id],
-        queryFn: () => getAlbumById(id),
-    })
+export function useGetAlbum(id: string) {
+  return useQuery({
+    queryKey: ["albums", id],
+    queryFn: () => getAlbumById(id),
+  });
 }
 
 // -------create album
-export function useCreateAlbum(){
-    const queryClient = useQueryClient()
+export function useCreateAlbum() {
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: createAlbum,
-        onSuccess: ()=>{
-            queryClient.invalidateQueries({queryKey: ["albums"]})
-            // -----sidebar stats has the album count
-            queryClient.invalidateQueries({queryKey: ["media", "stats"]})
-        }
-    })
+  return useMutation({
+    mutationFn: createAlbum,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+      // -----sidebar stats has the album count
+      queryClient.invalidateQueries({ queryKey: ["media", "stats"] });
+    },
+  });
 }
 
 // -------add photos to album
-export function useAddPhotosToAlbum(){
-    const queryClient = useQueryClient()
+export function useAddPhotosToAlbum() {
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: addPhotosToAlbum,
-        onSuccess: ()=>{
-            queryClient.invalidateQueries({queryKey: ["albums"]})
-        }
-    })
+  return useMutation({
+    mutationFn: addPhotosToAlbum,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+    },
+  });
 }
 
 // -------remove one photo from album
-export function useRemovePhotoFromAlbum(){
-    const queryClient = useQueryClient()
+export function useRemovePhotoFromAlbum() {
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: removePhotoFromAlbum,
-        onSuccess: ()=>{
-            queryClient.invalidateQueries({queryKey: ["albums"]})
-        }
-    })
+  return useMutation({
+    mutationFn: removePhotoFromAlbum,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+    },
+  });
 }
 
 // -------delete album
-export function useDeleteAlbum(){
-    const queryClient = useQueryClient()
+export function useDeleteAlbum() {
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: deleteAlbum,
-        onSuccess: ()=>{
-            queryClient.invalidateQueries({queryKey: ["albums"]})
-            // -----sidebar stats has the album count
-            queryClient.invalidateQueries({queryKey: ["media", "stats"]})
-        }
-    })
+  return useMutation({
+    mutationFn: deleteAlbum,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+      // -----sidebar stats has the album count
+      queryClient.invalidateQueries({ queryKey: ["media", "stats"] });
+    },
+  });
 }

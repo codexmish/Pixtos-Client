@@ -4,14 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 const authRoutes = ["/signin", "/signup"];
 
 // -----pages that need login (their inner pages too)
-const protectedRoutes = [
-  "/",
-  "/albums",
-  "/favorites",
-  "/photos",
-  "/profile",
-  "/trash",
-];
+const protectedRoutes = ["/", "/albums", "/favorites", "/profile", "/trash"];
 
 const isProtected = (pathname: string) =>
   protectedRoutes.some(
@@ -48,7 +41,6 @@ export const config = {
     "/signup",
     "/albums/:path*",
     "/favorites/:path*",
-    "/photos/:path*",
     "/profile/:path*",
     "/trash/:path*",
   ],

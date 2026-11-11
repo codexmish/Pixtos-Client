@@ -1,2 +1,2 @@
-export * from "./auth.validation"
-export * from "./album.validation"
+export * from "./auth.validation";
+export * from "./album.validation";

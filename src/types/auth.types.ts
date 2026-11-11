@@ -1,30 +1,30 @@
 export interface ISignIn {
-	email: string;
-	password: string;
+  email: string;
+  password: string;
 }
 
 export interface ISignup {
-	name: string;
-	email: string;
-	password: string;
+  name: string;
+  email: string;
+  password: string;
 }
 
 export interface IOtpVerify {
-	email: string;
-	otp: string;
+  email: string;
+  otp: string;
 }
 
 export interface IResetPassword {
-	email: string;
-	otp: string;
-	newPassword: string;
+  email: string;
+  otp: string;
+  newPassword: string;
 }
 
 export interface IChangePassword {
-	oldPassword: string;
-	newPassword: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface IUpdateProfile {
-	name: string;
+  name: string;
 }
