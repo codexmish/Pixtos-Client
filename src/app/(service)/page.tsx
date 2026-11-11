@@ -5,9 +5,12 @@ import PhotoGird, { type Media } from "@/components/module/photos/PhotoGird";
 import { PhotoLightbox } from "@/components/module/photos/PhotoLightbox";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/components/ui/toast";
+import { useGetMedia, useToggleFavorite, useToggleTrash } from "@/hooks";
 import { useUI } from "@/providers/UIProvider";
+import { errorMessage } from "@/utils";
 import { Film, ImageIcon, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const DUMMY_MEDIA = [
   {
@@ -328,22 +331,28 @@ export const DUMMY_MEDIA = [
 
 const PhotosPage = () => {
   const { openCreateAlbum, openUpload, searchQuery } = useUI();
-  const [photos, setPhotos] = useState([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [filterType, setFilterType] = useState("all");
-  const [loading, setLoading] = useState(false);
   const [activePhoto, setActivePhoto] = useState<Media | null>(null);
 
-  const fetchPhotos = async () => {
-    setTimeout(() => {
-      setPhotos(DUMMY_MEDIA as any);
-    }, 1000);
-  };
+  // -----tab value -> backend type (all = no filter)
+  const mediaType =
+    filterType === "photos"
+      ? "image"
+      : filterType === "videos"
+        ? "video"
+        : undefined;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: refetch when search or filter changes
-  useEffect(() => {
-    fetchPhotos();
-  }, [searchQuery, filterType]);
+  // -----getting my media (refetches when search text or tab changes)
+  const { data: mediaData, isLoading: loading } = useGetMedia({
+    q: searchQuery.trim() || undefined,
+    type: mediaType,
+  });
+  const photos = mediaData?.data ?? [];
+
+  // -----tanstack query data destracture
+  const { mutate: favToggle } = useToggleFavorite();
+  const { mutate: trashToggle } = useToggleTrash();
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
@@ -351,12 +360,39 @@ const PhotosPage = () => {
     );
   };
 
-  const toggleFevorite = async (id: string) => {
-    console.log(id);
+  // -----favorite on/off
+  const toggleFevorite = (id: string) => {
+    favToggle(id, {
+      onError: (err) => {
+        toast.add({
+          title: "Favorite not updated",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
-  const handleTrash = async (id: string) => {
-    console.log(id);
+  // -----move to trash
+  const handleTrash = (id: string) => {
+    trashToggle(id, {
+      onSuccess: () => {
+        // ----trashed photo leaves the list, so close the lightbox too
+        setActivePhoto(null);
+        toast.add({
+          title: "Moved to trash",
+          description: "You can restore it from Trash",
+          type: "success",
+        });
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Not moved to trash",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
   const handleBulkFavorite = async () => {
