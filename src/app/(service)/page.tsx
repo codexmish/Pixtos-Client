@@ -6,7 +6,13 @@ import { PhotoLightbox } from "@/components/module/photos/PhotoLightbox";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
-import { useGetMedia, useToggleFavorite, useToggleTrash } from "@/hooks";
+import {
+  useBulkFavorite,
+  useBulkTrash,
+  useGetMedia,
+  useToggleFavorite,
+  useToggleTrash,
+} from "@/hooks";
 import { useUI } from "@/providers/UIProvider";
 import { errorMessage } from "@/utils";
 import { Film, ImageIcon, Upload } from "lucide-react";
@@ -353,6 +359,8 @@ const PhotosPage = () => {
   // -----tanstack query data destracture
   const { mutate: favToggle } = useToggleFavorite();
   const { mutate: trashToggle } = useToggleTrash();
+  const { mutate: favBulk } = useBulkFavorite();
+  const { mutate: trashBulk } = useBulkTrash();
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
@@ -395,12 +403,49 @@ const PhotosPage = () => {
     });
   };
 
-  const handleBulkFavorite = async () => {
-    console.log(selectedIds);
+  // -----add all selected to favorites (already favorite ones stay favorite)
+  const handleBulkFavorite = () => {
+    favBulk(
+      { ids: selectedIds, isFavorite: true },
+      {
+        onSuccess: (res) => {
+          toast.add({
+            title: "Added to favorites",
+            description: `${res.data.count} item(s) added to favorites`,
+            type: "success",
+          });
+          setSelectedIds([]);
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Favorites not updated",
+            description: errorMessage(err),
+            type: "error",
+          });
+        },
+      },
+    );
   };
 
-  const handleBulkTrash = async () => {
-    console.log(selectedIds);
+  // -----move all selected to trash
+  const handleBulkTrash = () => {
+    trashBulk(selectedIds, {
+      onSuccess: (res) => {
+        toast.add({
+          title: "Moved to trash",
+          description: `${res.data.count} item(s) moved, you can restore them from Trash`,
+          type: "success",
+        });
+        setSelectedIds([]);
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Not moved to trash",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
   return (

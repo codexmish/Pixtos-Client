@@ -30,6 +30,12 @@ export interface IStorageStats {
   totalBytes: number;
 }
 
+// -----bulk favorite body (isFavorite is set on every item, not toggled)
+export interface IBulkFavorite {
+  ids: string[];
+  isFavorite: boolean;
+}
+
 // -----filters for GET /media (search text, photo/video tab, only favorites)
 export interface IMediaQuery {
   q?: string;

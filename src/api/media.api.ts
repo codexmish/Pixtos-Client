@@ -1,5 +1,11 @@
 import apiClient from "@/lib/apiClient";
-import type { IApiResponse, IMedia, IMediaQuery, IStorageStats } from "@/types";
+import type {
+    IApiResponse,
+    IBulkFavorite,
+    IMedia,
+    IMediaQuery,
+    IStorageStats,
+} from "@/types";
 
 // upload photos / videos (files go as form-data, field name "media")
 export function uploadMedia(files: File[]){
@@ -49,4 +55,14 @@ export function emptyTrash(){
 // storage stats for the sidebar
 export function getStorageStats(){
     return apiClient<IApiResponse<IStorageStats>>("/media/stats")
+}
+
+// favorite many items at once (isFavorite is set on all of them, not toggled)
+export function bulkFavorite(payload: IBulkFavorite){
+    return apiClient<IApiResponse<{count: number}>>("/media/bulk-favorite", {method: "PATCH", body: payload})
+}
+
+// move many items to trash at once
+export function bulkTrash(ids: string[]){
+    return apiClient<IApiResponse<{count: number}>>("/media/bulk-trash", {method: "PATCH", body: {ids}})
 }

@@ -1,4 +1,6 @@
 import {
+    bulkFavorite,
+    bulkTrash,
     deleteMedia,
     emptyTrash,
     getMedia,
@@ -110,5 +112,31 @@ export function useGetStorageStats(){
     return useQuery({
         queryKey: ["media", "stats"],
         queryFn: getStorageStats,
+    })
+}
+
+// -------bulk favorite
+export function useBulkFavorite(){
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: bulkFavorite,
+        onSuccess: ()=>{
+            queryClient.invalidateQueries({queryKey: ["media"]})
+            // -----album page shows the star too
+            queryClient.invalidateQueries({queryKey: ["albums"]})
+        }
+    })
+}
+
+// -------bulk move to trash
+export function useBulkTrash(){
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: bulkTrash,
+        onSuccess: ()=>{
+            queryClient.invalidateQueries({queryKey: ["media"]})
+        }
     })
 }
