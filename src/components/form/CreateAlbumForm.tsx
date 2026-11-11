@@ -1,28 +1,60 @@
 import { useForm } from "@tanstack/react-form";
 import React from "react";
+import { useCreateAlbum } from "@/hooks";
+import { errorMessage } from "@/utils";
+import { createAlbumSchema } from "@/validations";
+import type { Album } from "../module/album/CreateAlbumModel";
 import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 const CreateAlbumForm = ({
   initialPhotoIds,
   handleClose,
+  onAlbumCreated,
 }: {
   initialPhotoIds: string[];
   handleClose: any;
+  onAlbumCreated: (album: Album) => void;
 }) => {
+  // -----tanstack query data destracture
+  const { mutate: create, isPending: createPending } = useCreateAlbum();
+
   // ------tanstack form
   const form = useForm({
     defaultValues: {
       title: "",
       description: "",
     },
+    validators: {
+      onSubmit: createAlbumSchema,
+    },
     onSubmit: (data) => {
-      const loginData = {
-        title: data.value.title,
-        description: data.value.description,
+      const albumData = {
+        title: data.value.title.trim(),
+        description: data.value.description.trim(),
+        // ----selected photos go in right away
+        photoIds: initialPhotoIds,
       };
 
-      console.log(loginData);
+      create(albumData, {
+        onSuccess: (res) => {
+          toast.add({
+            title: "Album created",
+            description: `"${res.data.title}" is ready`,
+            type: "success",
+          });
+          onAlbumCreated(res.data);
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Album not created",
+            description: errorMessage(err),
+            type: "error",
+          });
+        },
+      });
     },
   });
 
@@ -119,8 +151,19 @@ const CreateAlbumForm = ({
             Cancel
           </button>
 
-          <button type="submit" onClick={handleClose} className="btn-primary">
-            Create Album
+          {/* ----modal closes after the album is created (onAlbumCreated) */}
+          <button
+            type="submit"
+            disabled={createPending}
+            className="btn-primary"
+          >
+            {createPending ? (
+              <>
+                Creating <Spinner />
+              </>
+            ) : (
+              "Create Album"
+            )}
           </button>
         </div>
       </form>

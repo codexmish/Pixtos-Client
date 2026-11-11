@@ -1,45 +1,77 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Media } from "@/components/module/photos/PhotoGird";
-import { type AlbumDetail, DUMMY_ALBUM_DETAIL } from "../page";
 import { Spinner } from "@/components/ui/spinner";
 import { ArrowLeft, Calendar, Plus, Trash2 } from "lucide-react";
 import PhotoGird from "@/components/module/photos/PhotoGird";
 import AddPhotosModel from "@/components/module/album/AddPhotosModel";
 import { PhotoLightbox } from "@/components/module/photos/PhotoLightbox";
+import { toast } from "@/components/ui/toast";
+import {
+  useDeleteAlbum,
+  useGetAlbum,
+  useRemovePhotoFromAlbum,
+  useToggleFavorite,
+} from "@/hooks";
+import { errorMessage } from "@/utils";
 
 const AlbumDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [album, setAlbum] = useState<AlbumDetail | null>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [activePhoto, setActivePhoto] = useState<Media | null>(null);
   const [isAddPhotosModelOpen, setIsAddPhotosModelOpen] = useState(false);
 
-  const fetchAlbum = async () => {
-    setTimeout(() => {
-      setAlbum(DUMMY_ALBUM_DETAIL);
-      setLoading(false);
-    }, 500);
+  // -----getting this album with its photos
+  const { data: albumData, isLoading: loading } = useGetAlbum(id);
+  const album = albumData?.data;
+
+  // -----tanstack query data destracture
+  const { mutate: removePhoto } = useRemovePhotoFromAlbum();
+  const { mutate: favToggle } = useToggleFavorite();
+  const { mutate: removeAlbum } = useDeleteAlbum();
+
+  // -----remove photo from this album (stays in library)
+  const handleRemoveFromAlbum = (photoId: string) => {
+    removePhoto(
+      { albumId: id, photoId },
+      {
+        onSuccess: () => {
+          // ----photo leaves this album, so close the lightbox too
+          setActivePhoto(null);
+          toast.add({
+            title: "Removed from album",
+            description: "It's still in your library",
+            type: "success",
+          });
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Not removed",
+            description: errorMessage(err),
+            type: "error",
+          });
+        },
+      },
+    );
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: refetch when the album id changes
-  useEffect(() => {
-    fetchAlbum();
-  }, [id]);
-
-  const handleRemoveFromAlbum = async (photoId: string) => {
-    console.log(photoId);
+  // -----favorite on/off
+  const toggleFavorite = (photoId: string) => {
+    favToggle(photoId, {
+      onError: (err) => {
+        toast.add({
+          title: "Favorite not updated",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
-  const toggleFavorite = async (photoId: string) => {
-    console.log(photoId);
-  };
-
-  const handleDeleteAlbum = async () => {
+  const handleDeleteAlbum = () => {
     if (!album) return;
     if (
       !window.confirm(
@@ -49,9 +81,24 @@ const AlbumDetailsPage = () => {
       return;
     }
 
-    // -----delete album (demo for now), then go back to the albums list
-    console.log(album._id);
-    router.push("/albums");
+    // -----delete album, then go back to the albums list
+    removeAlbum(album._id, {
+      onSuccess: () => {
+        toast.add({
+          title: "Album deleted",
+          description: "Photos inside are still in your library",
+          type: "success",
+        });
+        router.push("/albums");
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Album not deleted",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
   if (loading) {
@@ -172,8 +219,9 @@ const AlbumDetailsPage = () => {
         albumId={album._id}
         existingPhotoIds={existingPhotoIds}
         onClose={() => setIsAddPhotosModelOpen(false)}
-        onPhotosAdded={(updatedAlbem) => {
-          setAlbum(updatedAlbem);
+        onPhotosAdded={() => {
+          // ----album refreshes by itself (hook refetches it), just close
+          setIsAddPhotosModelOpen(false);
         }}
       />
     </div>

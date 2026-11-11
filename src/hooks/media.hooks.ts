@@ -43,6 +43,8 @@ export function useToggleFavorite(){
         mutationFn: toggleFavorite,
         onSuccess: ()=>{
             queryClient.invalidateQueries({queryKey: ["media"]})
+            // -----album page shows the star too
+            queryClient.invalidateQueries({queryKey: ["albums"]})
         }
     })
 }

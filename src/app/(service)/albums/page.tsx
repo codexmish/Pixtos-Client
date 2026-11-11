@@ -1,59 +1,52 @@
 "use client";
-import type { Media } from "@/components/module/photos/PhotoGird";
 import { useUI } from "@/providers/UIProvider";
 import { FolderHeartIcon, ImageIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type MouseEvent, useEffect, useState } from "react";
-import { DUMMY_MEDIA } from "../page";
+import type { MouseEvent } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Image from "next/image";
-
-// -----one album with its photos
-export type AlbumDetail = {
-  _id: string;
-  title: string;
-  description: string;
-  photos: Media[];
-  createdAt: string;
-};
-
-export const DUMMY_ALBUM_DETAIL = {
-  _id: "6ad07889d514b3f0ab2c53c9",
-  title: "Summer Vacation",
-  description: "",
-  owner: {
-    _id: "6acf808efdb27097e8c82140",
-    name: "GreatStack",
-    email: "user.greatstack@gmail.com",
-  },
-  photos: DUMMY_MEDIA.slice(0, 4),
-  createdAt: "2026-10-15T06:54:01.552Z",
-  updatedAt: "2026-10-15T06:55:10.555Z",
-};
+import { toast } from "@/components/ui/toast";
+import { useDeleteAlbum, useGetAlbums } from "@/hooks";
+import { errorMessage } from "@/utils";
 
 const AlbumsPage = () => {
   const { openCreateAlbum } = useUI();
-  const [albums, setAlbums] = useState<AlbumDetail[]>([]);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const fetchAlbum = async () => {
-    setTimeout(() => {
-      setAlbums([DUMMY_ALBUM_DETAIL]);
-      setLoading(false);
-    }, 500);
-  };
+  // -----getting my albums
+  // -----server sends 404 when there is none, so error = empty list
+  // -----(otherwise the last deleted album would stay from old data)
+  const {
+    data: albumsData,
+    isLoading: loading,
+    isError: albumsError,
+  } = useGetAlbums();
+  const albums = albumsError ? [] : (albumsData?.data ?? []);
 
-  // -----delete album (demo for now), stop the click from also opening the album
+  // -----tanstack query data destracture
+  const { mutate: removeAlbum } = useDeleteAlbum();
+
+  // -----delete album, stop the click from also opening the album
   const handleDeleteAlbum = (e: MouseEvent, id: string) => {
     e.stopPropagation();
-    console.log(id);
-  };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: load albums once on mount
-  useEffect(() => {
-    fetchAlbum();
-  }, []);
+    removeAlbum(id, {
+      onSuccess: () => {
+        toast.add({
+          title: "Album deleted",
+          description: "Photos inside are still in your library",
+          type: "success",
+        });
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Album not deleted",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">

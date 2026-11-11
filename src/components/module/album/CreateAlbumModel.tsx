@@ -59,6 +59,7 @@ const CreateAlbumModel = ({
         <CreateAlbumForm
           initialPhotoIds={initialPhotoIds}
           handleClose={handleClose}
+          onAlbumCreated={onAlbumCreated}
         />
       </div>
     </div>

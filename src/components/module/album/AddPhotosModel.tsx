@@ -1,9 +1,9 @@
 "use client";
 
-import type { AlbumDetail } from "@/app/(service)/albums/page";
-import { DUMMY_MEDIA } from "@/app/(service)/page";
-import type { Media } from "@/components/module/photos/PhotoGird";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "@/components/ui/toast";
+import { useAddPhotosToAlbum, useGetMedia } from "@/hooks";
+import { errorMessage } from "@/utils";
 import { CheckIcon, PlayIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -14,7 +14,7 @@ type AddPhotosModelProps = {
   albumId: string;
   existingPhotoIds: string[];
   onClose: () => void;
-  onPhotosAdded: (updatedAlbum: AlbumDetail) => void;
+  onPhotosAdded: () => void;
 };
 
 const AddPhotosModel = ({
@@ -24,23 +24,23 @@ const AddPhotosModel = ({
   onClose,
   onPhotosAdded,
 }: AddPhotosModelProps) => {
-  const [availablePhotos, setAvailablePhotos] = useState<Media[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
+  // -----my library (same data as the main photo page, so it comes from cache)
+  const { data: mediaData, isLoading: loading } = useGetMedia({});
+
+  // -----only photos that aren't in this album yet
+  const availablePhotos = (mediaData?.data ?? []).filter(
+    (photo) => !existingPhotoIds.includes(photo._id),
+  );
+
+  // -----tanstack query data destracture
+  const { mutate: addPhotos, isPending: submitting } = useAddPhotosToAlbum();
+
+  // -----fresh selection every time the modal opens
   useEffect(() => {
-    if (!isOpen) return;
-
-    // -----fake api call: library photos that aren't in this album yet
-    const fetchLibrary = async () => {
-      setAvailablePhotos(
-        DUMMY_MEDIA.filter((photo) => !existingPhotoIds.includes(photo._id)),
-      );
-    };
-    fetchLibrary();
-    setSelectedIds([]);
-  }, [isOpen, existingPhotoIds]);
+    if (isOpen) setSelectedIds([]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -50,8 +50,28 @@ const AddPhotosModel = ({
     );
   };
 
-  const handleAdd = async () => {
-    console.log(selectedIds);
+  // -----add selected photos to this album
+  const handleAdd = () => {
+    addPhotos(
+      { albumId, photoIds: selectedIds },
+      {
+        onSuccess: () => {
+          toast.add({
+            title: "Photos added",
+            description: `${selectedIds.length} item(s) added to this album`,
+            type: "success",
+          });
+          onPhotosAdded();
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Photos not added",
+            description: errorMessage(err),
+            type: "error",
+          });
+        },
+      },
+    );
   };
 
   return (
