@@ -1,30 +1,29 @@
 "use client";
 import type { Media } from "@/components/module/photos/PhotoGird";
 import { useUI } from "@/providers/UIProvider";
-import { useEffect, useState } from "react";
-import { DUMMY_MEDIA } from "../page";
+import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import PhotoGird from "@/components/module/photos/PhotoGird";
 import { PhotoLightbox } from "@/components/module/photos/PhotoLightbox";
+import { toast } from "@/components/ui/toast";
+import { useGetMedia, useToggleFavorite, useToggleTrash } from "@/hooks";
+import { errorMessage } from "@/utils";
 
 const FavoritesPage = () => {
   const { searchQuery } = useUI();
-  const [photos, setPhotos] = useState<Media[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [activePhoto, setActivePhoto] = useState<Media | null>(null);
 
-  const fetchFavorite = async () => {
-    setTimeout(() => {
-      setPhotos(DUMMY_MEDIA.slice(5, 9));
-      setLoading(false);
-    }, 500);
-  };
+  // -----getting only favorite media (refetches when search text changes)
+  const { data: mediaData, isLoading: loading } = useGetMedia({
+    favorite: true,
+    q: searchQuery.trim() || undefined,
+  });
+  const photos = mediaData?.data ?? [];
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: refetch when search changes
-  useEffect(() => {
-    fetchFavorite();
-  }, [searchQuery]);
+  // -----tanstack query data destracture
+  const { mutate: favToggle } = useToggleFavorite();
+  const { mutate: trashToggle } = useToggleTrash();
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
@@ -32,12 +31,43 @@ const FavoritesPage = () => {
     );
   };
 
-  const toggleFavorite = async (id: string) => {
-    console.log(id);
+  // -----remove from favorites
+  const toggleFavorite = (id: string) => {
+    favToggle(id, {
+      onSuccess: () => {
+        // ----photo leaves this list, so close the lightbox too
+        setActivePhoto(null);
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Favorite not updated",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
-  const handleTrash = async (id: string) => {
-    console.log(id);
+  // -----move to trash
+  const handleTrash = (id: string) => {
+    trashToggle(id, {
+      onSuccess: () => {
+        // ----trashed photo leaves the list, so close the lightbox too
+        setActivePhoto(null);
+        toast.add({
+          title: "Moved to trash",
+          description: "You can restore it from Trash",
+          type: "success",
+        });
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Not moved to trash",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
   };
 
   return (

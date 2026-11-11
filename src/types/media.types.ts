@@ -20,8 +20,9 @@ export interface IMedia {
   updatedAt: string;
 }
 
-// -----filters for GET /media (search text and photo/video tab)
+// -----filters for GET /media (search text, photo/video tab, only favorites)
 export interface IMediaQuery {
   q?: string;
   type?: "image" | "video";
+  favorite?: boolean;
 }
