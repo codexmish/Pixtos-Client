@@ -1,5 +1,9 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "@/components/ui/toast";
+import { useUploadMedia } from "@/hooks";
+import { errorMessage } from "@/utils";
 import { Film, X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
@@ -26,6 +30,9 @@ const Uploadmodel = ({
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileUploadRef = useRef<HTMLInputElement>(null);
+
+  // -----tanstack query data destracture
+  const { mutate: upload, isPending: uploadPending } = useUploadMedia();
 
   if (!isOpen) return null;
 
@@ -71,7 +78,27 @@ const Uploadmodel = ({
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleUpload = () => {};
+  // -----upload selected files
+  const handleUpload = () => {
+    upload(selectedFiles, {
+      onSuccess: () => {
+        toast.add({
+          title: "Upload complete",
+          description: `${selectedFiles.length} file(s) added to your library`,
+          type: "success",
+        });
+        onUploadSuccess();
+        handleClose();
+      },
+      onError: (err) => {
+        toast.add({
+          title: "Upload failed",
+          description: errorMessage(err),
+          type: "error",
+        });
+      },
+    });
+  };
 
   return createPortal(
     <div className="modal-backdrop">
@@ -220,10 +247,17 @@ const Uploadmodel = ({
 
             <button
               onClick={handleUpload}
+              disabled={selectedFiles.length === 0 || uploadPending}
               className="btn-primary"
               type="button"
             >
-              Submit
+              {uploadPending ? (
+                <>
+                  Uploading <Spinner />
+                </>
+              ) : (
+                "Submit"
+              )}
             </button>
           </div>
         </div>
