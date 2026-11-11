@@ -13,15 +13,9 @@ const AlbumsPage = () => {
   const { openCreateAlbum } = useUI();
   const router = useRouter();
 
-  // -----getting my albums
-  // -----server sends 404 when there is none, so error = empty list
-  // -----(otherwise the last deleted album would stay from old data)
-  const {
-    data: albumsData,
-    isLoading: loading,
-    isError: albumsError,
-  } = useGetAlbums();
-  const albums = albumsError ? [] : (albumsData?.data ?? []);
+  // -----getting my albums (empty list when there is none)
+  const { data: albumsData, isLoading: loading } = useGetAlbums();
+  const albums = albumsData?.data ?? [];
 
   // -----tanstack query data destracture
   const { mutate: removeAlbum } = useDeleteAlbum();

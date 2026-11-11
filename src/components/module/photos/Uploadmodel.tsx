@@ -54,6 +54,11 @@ const Uploadmodel = ({
 
     if (validFiles.length === 0) {
       // ------toaster
+      toast.add({
+        title: "File not supported",
+        description: "Only photos and videos can be uploaded",
+        type: "error",
+      });
       return;
     }
 

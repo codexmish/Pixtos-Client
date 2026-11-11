@@ -1,6 +1,12 @@
 "use client";
 
-import { CheckIcon, PlayIcon, StarIcon, XIcon } from "lucide-react";
+import {
+  CheckIcon,
+  ImageOffIcon,
+  PlayIcon,
+  StarIcon,
+  XIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import type { Media } from "./PhotoGird";
@@ -24,6 +30,8 @@ const PhotoCard = ({
   onRemoveAlbum,
 }: PhotoCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  // -----thumbnail failed to load
+  const [imageError, setImageError] = useState(false);
   const isVideo =
     photo.mediaType === "video" ||
     photo.format === "mp4" ||
@@ -48,16 +56,25 @@ const PhotoCard = ({
     >
       {/* ----aspect ration container */}
       <div className="aspect-4/3 w-full relative overflow-hidden bg-slate-100">
-        {!imageLoaded && (
-          <div className="absolute inset-0 bg-slate-200/80 animate-pulse flex items-center justify-center text-xs text-slate-400">
-            Loading.....
+        {imageError ? (
+          // ----thumbnail failed, show a plain box instead of loading forever
+          <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center gap-1 text-xs text-slate-400">
+            <ImageOffIcon className="size-6" />
+            Preview not available
           </div>
+        ) : (
+          !imageLoaded && (
+            <div className="absolute inset-0 bg-slate-200/80 animate-pulse flex items-center justify-center text-xs text-slate-400">
+              Loading.....
+            </div>
+          )
         )}
         <Image
           src={photo.thumbnailUrl || photo.url}
           alt={photo.title}
           loading="lazy"
           onLoad={() => setImageLoaded(true)}
+          onError={() => setImageError(true)}
           width={400}
           height={400}
           className={`photo-card-img ${imageLoaded ? "opacity-100" : "opacity-0"}`}

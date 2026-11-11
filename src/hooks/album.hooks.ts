@@ -13,8 +13,6 @@ export function useGetAlbums(){
     return useQuery({
         queryKey: ["albums"],
         queryFn: getAlbums,
-        // -----server sends 404 when there is no album, no need to try again
-        retry: false,
     })
 }
 
